@@ -450,3 +450,395 @@
       ctx.arcTo(pad + w, pad + w, pad, pad + w, r);
       ctx.arcTo(pad, pad + w, pad, pad, r);
       ctx.arcTo(pad, pad, pad + w, pad, r);
+      ctx.closePath();
+
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.12)';
+      ctx.shadowBlur = 30;
+      ctx.shadowOffsetY = 15;
+
+      const glassGrad = ctx.createLinearGradient(pad, pad, pad + w, pad + w);
+      glassGrad.addColorStop(0, 'rgba(255, 255, 255, 0.95)');
+      glassGrad.addColorStop(0.5, 'rgba(240, 246, 255, 0.75)');
+      glassGrad.addColorStop(1, 'rgba(255, 240, 245, 0.85)');
+      ctx.fillStyle = glassGrad;
+      ctx.fill();
+      ctx.restore();
+
+      ctx.save();
+      ctx.font = '900 210px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+
+      const textGrad = ctx.createLinearGradient(150, 150, 360, 360);
+      textGrad.addColorStop(0, '#38BDF8');
+      textGrad.addColorStop(1, '#F472B6');
+      ctx.fillStyle = textGrad;
+      ctx.fillText('Hc', 256, 266);
+      ctx.restore();
+
+      const dataUrl = canvas.toDataURL('image/png');
+      document.getElementById('appleTouchIcon').href = dataUrl;
+      document.getElementById('favicon').href = dataUrl;
+    } catch(e) { console.log(e); }
+  </script>
+
+  <!-- FIREBASE & MAIN APP LOGIC -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyB7hJtfhYoanPRVXO4uO8DATIJoaEohofE",
+      authDomain: "healthcheck-31474.firebaseapp.com",
+      projectId: "healthcheck-31474",
+      storageBucket: "healthcheck-31474.firebasestorage.app",
+      messagingSenderId: "125881795579",
+      appId: "1:125881795579:web:5c965fd71be523fa75c15e",
+      measurementId: "G-NDKR4QLJVJ"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    let currentUserId = null;
+    let partnerId = localStorage.getItem('myhealth_partnerId') || null;
+    let viewUser = 'me';
+
+    let selectedDate = new Date().toISOString().split('T')[0];
+
+    let mySettings = JSON.parse(localStorage.getItem('myhealth_settings')) || { goalCal: 2000, targetWeight: 53.0, prevSmokeAvg: 15 };
+    let myLogs = JSON.parse(localStorage.getItem('myhealth_logs')) || {};
+
+    let partnerSettings = { goalCal: 2000, targetWeight: 53.0, prevSmokeAvg: 15 };
+    let partnerLogs = {};
+
+    signInAnonymously(auth).catch(err => console.error("Auth Error:", err));
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        currentUserId = user.uid;
+        const codeEl = document.getElementById('myPairCode');
+        if (codeEl) codeEl.textContent = currentUserId;
+
+        onSnapshot(doc(db, "health_users", currentUserId), (docSnap) => {
+          if (docSnap.exists()) {
+            const remoteData = docSnap.data();
+            mySettings = remoteData.settings || mySettings;
+            myLogs = remoteData.logs || myLogs;
+            saveLocalState();
+            if (viewUser === 'me') window.renderAll();
+          } else {
+            pushToFirebase();
+          }
+        });
+
+        if (partnerId) {
+          const pInput = document.getElementById('partnerCodeInput');
+          if (pInput) pInput.value = partnerId;
+          const pDot = document.getElementById('pairStatusDot');
+          if (pDot) pDot.className = "absolute top-0 right-0 w-3 h-3 bg-emerald-400 border-2 border-white rounded-full";
+          listenPartnerData();
+        }
+      }
+    });
+
+    function listenPartnerData() {
+      if (!partnerId) return;
+      onSnapshot(doc(db, "health_users", partnerId), (docSnap) => {
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          partnerSettings = data.settings || partnerSettings;
+          partnerLogs = data.logs || partnerLogs;
+          if (viewUser === 'partner') window.renderAll();
+        }
+      });
+    }
+
+    function pushToFirebase() {
+      if (!currentUserId) return;
+      setDoc(doc(db, "health_users", currentUserId), {
+        settings: mySettings,
+        logs: myLogs,
+        updatedAt: new Date().toISOString()
+      }, { merge: true });
+    }
+
+    function saveLocalState() {
+      localStorage.setItem('myhealth_settings', JSON.stringify(mySettings));
+      localStorage.setItem('myhealth_logs', JSON.stringify(myLogs));
+    }
+
+    function initDateLog(dateKey, logsObj) {
+      if (!logsObj[dateKey]) {
+        logsObj[dateKey] = { meals: [], weight: null, fat: null, sleep: null, smoked: 0 };
+      }
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/[&<>"']/g, function(m) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
+      });
+    }
+
+    window.renderAll = function() {
+      const activeSettings = viewUser === 'me' ? mySettings : partnerSettings;
+      const activeLogs = viewUser === 'me' ? myLogs : partnerLogs;
+
+      initDateLog(selectedDate, activeLogs);
+      const currentLog = activeLogs[selectedDate];
+
+      const mealTypes = ['breakfast', 'lunch', 'dinner', 'snack'];
+      let totalIntakeCal = 0;
+
+      mealTypes.forEach(type => {
+        const listEl = document.getElementById(`${type}List`);
+        const totalEl = document.getElementById(`${type}Total`);
+        if (!listEl || !totalEl) return;
+
+        const filtered = (currentLog.meals || []).filter(m => m.type === type);
+        const subTotal = filtered.reduce((sum, item) => sum + item.cal, 0);
+
+        totalIntakeCal += subTotal;
+        totalEl.textContent = `${subTotal} kcal`;
+
+        if (filtered.length === 0) {
+          listEl.innerHTML = `<p class="text-slate-300 text-xs italic py-0.5">記録なし</p>`;
+        } else {
+          listEl.innerHTML = filtered.map(item => `
+            <div class="flex justify-between items-center py-1 border-b border-slate-50 last:border-none">
+              <span class="text-slate-700 font-medium text-xs">${escapeHtml(item.name)}</span>
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-slate-800 text-xs">${item.cal} <span class="text-[10px] text-slate-400 font-normal">kcal</span></span>
+                ${viewUser === 'me' ? `<button onclick="window.deleteMeal(${item.id})" class="text-slate-300 hover:text-rose-500 text-xs"><i class="fa-solid fa-trash-can"></i></button>` : ''}
+              </div>
+            </div>
+          `).join('');
+        }
+      });
+
+      const remainingCal = activeSettings.goalCal - totalIntakeCal;
+      document.getElementById('dashIntakeCal').textContent = totalIntakeCal.toLocaleString();
+      document.getElementById('dashGoalCal').textContent = activeSettings.goalCal.toLocaleString();
+      document.getElementById('dashRemainingCal').textContent = `${Math.abs(remainingCal).toLocaleString()} kcal`;
+      document.getElementById('dashCalDiffLabel').textContent = remainingCal >= 0 ? '残り' : 'オーバー';
+      document.getElementById('dashCalProgress').style.width = `${Math.min((totalIntakeCal / activeSettings.goalCal) * 100, 100)}%`;
+
+      document.getElementById('mealTargetVal').textContent = activeSettings.goalCal.toLocaleString();
+      document.getElementById('mealCurrentVal').textContent = totalIntakeCal.toLocaleString();
+      document.getElementById('mealDiffVal').textContent = Math.abs(remainingCal).toLocaleString();
+      document.getElementById('mealDiffLabel').textContent = remainingCal >= 0 ? '残り' : 'オーバー';
+      document.getElementById('targetCalInput').value = activeSettings.goalCal;
+
+      const weight = currentLog.weight;
+      const targetWeight = activeSettings.targetWeight || 53.0;
+      document.getElementById('dashWeight').textContent = weight !== null ? weight : '-';
+      document.getElementById('dashTargetWeight').textContent = targetWeight;
+      document.getElementById('targetWeightInput').value = targetWeight;
+
+      if (weight !== null) {
+        const diffWeight = (weight - targetWeight).toFixed(1);
+        document.getElementById('dashWeightDiff').textContent = diffWeight > 0 ? `-${diffWeight}` : `+${Math.abs(diffWeight)}`;
+        document.getElementById('inputWeight').value = weight;
+      } else {
+        document.getElementById('dashWeightDiff').textContent = '-';
+        document.getElementById('inputWeight').value = '';
+      }
+
+      document.getElementById('dashFat').textContent = currentLog.fat !== null ? currentLog.fat : '-';
+      document.getElementById('inputFat').value = currentLog.fat !== null ? currentLog.fat : '';
+
+      document.getElementById('dashSleep').textContent = currentLog.sleep !== null ? currentLog.sleep : '-';
+      document.getElementById('inputSleep').value = currentLog.sleep !== null ? currentLog.sleep : '';
+
+      const todaySmoked = currentLog.smoked || 0;
+      document.getElementById('dashTodaySmoke').textContent = todaySmoked;
+      document.getElementById('todaySmokeCount').textContent = todaySmoked;
+      document.getElementById('prevSmokeAvg').value = activeSettings.prevSmokeAvg;
+
+      let totalReducedCigs = 0;
+      Object.keys(activeLogs).forEach(dateKey => {
+        const log = activeLogs[dateKey];
+        const prevAvg = activeSettings.prevSmokeAvg || 15;
+        const reduced = Math.max(0, prevAvg - (log.smoked || 0));
+        totalReducedCigs += reduced;
+      });
+
+      const packsSaved = Math.floor(totalReducedCigs / 20);
+      const totalSavingsYen = packsSaved * 640;
+
+      document.getElementById('dashSavings').textContent = `¥${totalSavingsYen.toLocaleString()}`;
+      document.getElementById('smokeTotalSavings').textContent = `¥${totalSavingsYen.toLocaleString()}`;
+      document.getElementById('dashReducedCigs').textContent = totalReducedCigs;
+      document.getElementById('smokeTotalReduced').textContent = totalReducedCigs;
+    };
+
+    window.switchViewUser = function(target) {
+      viewUser = target;
+      const meBtn = document.getElementById('viewMeBtn');
+      const partnerBtn = document.getElementById('viewPartnerBtn');
+      const partnerBanner = document.getElementById('partnerBanner');
+      const editBtns = document.querySelectorAll('.edit-only');
+
+      if (target === 'me') {
+        meBtn.className = "flex-1 py-1.5 rounded-lg bg-white text-sky-600 shadow font-bold";
+        partnerBtn.className = "flex-1 py-1.5 rounded-lg text-white/80 hover:text-white font-bold";
+        partnerBanner.classList.add('hidden');
+        editBtns.forEach(el => el.classList.remove('hidden'));
+      } else {
+        partnerBtn.className = "flex-1 py-1.5 rounded-lg bg-white text-pink-600 shadow font-bold";
+        meBtn.className = "flex-1 py-1.5 rounded-lg text-white/80 hover:text-white font-bold";
+        partnerBanner.classList.remove('hidden');
+        editBtns.forEach(el => el.classList.add('hidden'));
+      }
+      window.renderAll();
+    };
+
+    function saveStateAndSync() {
+      saveLocalState();
+      pushToFirebase();
+      window.renderAll();
+    }
+
+    window.handleAddMeal = function(e) {
+      e.preventDefault();
+      if (viewUser !== 'me') return;
+      const type = document.getElementById('mealTypeSelect').value;
+      const name = document.getElementById('mealNameInput').value.trim();
+      const cal = parseInt(document.getElementById('mealCalInput').value, 10);
+
+      if (name && !isNaN(cal)) {
+        initDateLog(selectedDate, myLogs);
+        myLogs[selectedDate].meals.push({ id: Date.now(), type, name, cal });
+        saveStateAndSync();
+        window.closeMealModal();
+        document.getElementById('mealNameInput').value = '';
+        document.getElementById('mealCalInput').value = '';
+      }
+    };
+
+    window.deleteMeal = function(id) {
+      if (viewUser !== 'me') return;
+      myLogs[selectedDate].meals = myLogs[selectedDate].meals.filter(m => m.id !== id);
+      saveStateAndSync();
+    };
+
+    window.handleBodySubmit = function(e) {
+      e.preventDefault();
+      if (viewUser !== 'me') return;
+      const w = parseFloat(document.getElementById('inputWeight').value);
+      const f = parseFloat(document.getElementById('inputFat').value);
+
+      initDateLog(selectedDate, myLogs);
+      if (!isNaN(w)) myLogs[selectedDate].weight = w;
+      if (!isNaN(f)) myLogs[selectedDate].fat = f;
+
+      saveStateAndSync();
+      alert('身体データを保存しました！');
+    };
+
+    window.handleSleepSubmit = function(e) {
+      e.preventDefault();
+      if (viewUser !== 'me') return;
+      const s = parseFloat(document.getElementById('inputSleep').value);
+
+      initDateLog(selectedDate, myLogs);
+      if (!isNaN(s)) myLogs[selectedDate].sleep = s;
+
+      saveStateAndSync();
+      alert('睡眠データを記録しました！');
+    };
+
+    window.changeSmokeCount = function(delta) {
+      if (viewUser !== 'me') return;
+      initDateLog(selectedDate, myLogs);
+      let current = myLogs[selectedDate].smoked || 0;
+      myLogs[selectedDate].smoked = Math.max(0, current + delta);
+      saveStateAndSync();
+    };
+
+    window.updatePrevSmokeAvg = function(val) {
+      if (viewUser !== 'me') return;
+      const num = parseInt(val, 10);
+      if (!isNaN(num) && num >= 0) {
+        mySettings.prevSmokeAvg = num;
+        saveStateAndSync();
+      }
+    };
+
+    window.saveTargetCalorie = function() {
+      if (viewUser !== 'me') return;
+      const val = parseInt(document.getElementById('targetCalInput').value, 10);
+      if (val && val > 0) {
+        mySettings.goalCal = val;
+        saveStateAndSync();
+        window.closeGoalCalModal();
+      }
+    };
+
+    window.saveTargetWeight = function() {
+      if (viewUser !== 'me') return;
+      const val = parseFloat(document.getElementById('targetWeightInput').value);
+      if (val && val > 0) {
+        mySettings.targetWeight = val;
+        saveStateAndSync();
+        window.closeWeightGoalModal();
+      }
+    };
+
+    window.savePartnerCode = function() {
+      const code = document.getElementById('partnerCodeInput').value.trim();
+      if (code) {
+        partnerId = code;
+        localStorage.setItem('myhealth_partnerId', code);
+        listenPartnerData();
+        window.togglePairModal();
+        alert('パートナーを接続しました！');
+      }
+    };
+
+    window.copyMyCode = function() {
+      if (currentUserId) {
+        navigator.clipboard.writeText(currentUserId);
+        alert('あなたのIDコードをコピーしました！相手に送信してください。');
+      }
+    };
+
+    window.changeDate = function(newDate) {
+      if (!newDate) return;
+      selectedDate = newDate;
+      const d = new Date(selectedDate);
+      const days = ['Sun.', 'Mon.', 'Tue.', 'Wed.', 'Thu.', 'Fri.', 'Sat.'];
+      document.getElementById('headerDateDisplay').textContent = `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')} ${days[d.getDay()]}`;
+      window.renderAll();
+    };
+
+    window.openMealModal = function() { document.getElementById('mealModal').classList.remove('hidden'); };
+    window.closeMealModal = function() { document.getElementById('mealModal').classList.add('hidden'); };
+    window.openGoalCalModal = function() { document.getElementById('goalCalModal').classList.remove('hidden'); };
+    window.closeGoalCalModal = function() { document.getElementById('goalCalModal').classList.add('hidden'); };
+    window.openWeightGoalModal = function() { document.getElementById('targetWeightModal').classList.remove('hidden'); };
+    window.closeWeightGoalModal = function() { document.getElementById('targetWeightModal').classList.add('hidden'); };
+    window.togglePairModal = function() { document.getElementById('pairModal').classList.toggle('hidden'); };
+
+    window.switchTab = function(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('text-sky-500');
+        btn.classList.add('text-slate-400');
+      });
+      const activeNav = document.getElementById(`nav-${tabId}`);
+      if (activeNav) {
+        activeNav.classList.remove('text-slate-400');
+        activeNav.classList.add('text-sky-500');
+      }
+    };
+
+    const datePickerEl = document.getElementById('datePicker');
+    if (datePickerEl) datePickerEl.value = selectedDate;
+    window.renderAll();
+  </script>
+</body>
+</html>
