@@ -4,6 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>My Health Log</title>
+  
+  <!-- App Icon settings (Dynamic Glass Icon) -->
+  <link rel="apple-touch-icon" id="appleTouchIcon" href="">
+  <link rel="icon" id="favicon" href="">
+  <meta name="apple-mobile-web-app-title" content="My Health">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
@@ -21,6 +29,110 @@
     }
     .pb-safe { padding-bottom: env(safe-area-inset-bottom, 1rem); }
   </style>
+
+  <!-- ICON GENERATION SCRIPT -->
+  <script>
+    function generateGlassIcon() {
+      const canvas = document.createElement('canvas');
+      canvas.width = 512;
+      canvas.height = 512;
+      const ctx = canvas.getContext('2d');
+
+      // 1. Soft Warm Pastel Background
+      const bgGrad = ctx.createLinearGradient(0, 0, 512, 512);
+      bgGrad.addColorStop(0, '#FAF7F2');
+      bgGrad.addColorStop(1, '#F3EDE4');
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, 512, 512);
+
+      // 2. Glass Card Base (Rounded Square)
+      const pad = 32;
+      const w = 512 - pad * 2;
+      const r = 96;
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(pad + r, pad);
+      ctx.arcTo(pad + w, pad, pad + w, pad + w, r);
+      ctx.arcTo(pad + w, pad + w, pad, pad + w, r);
+      ctx.arcTo(pad, pad + w, pad, pad, r);
+      ctx.arcTo(pad, pad, pad + w, pad, r);
+      ctx.closePath();
+
+      // Card Drop Shadow
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.12)';
+      ctx.shadowBlur = 30;
+      ctx.shadowOffsetY = 15;
+
+      // Card Glass Fill Gradient
+      const glassGrad = ctx.createLinearGradient(pad, pad, pad + w, pad + w);
+      glassGrad.addColorStop(0, 'rgba(255, 255, 255, 0.95)');
+      glassGrad.addColorStop(0.5, 'rgba(240, 246, 255, 0.75)');
+      glassGrad.addColorStop(1, 'rgba(255, 240, 245, 0.85)');
+      ctx.fillStyle = glassGrad;
+      ctx.fill();
+      ctx.restore();
+
+      // Glass Inner Glow / Rim
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(pad + r, pad);
+      ctx.arcTo(pad + w, pad, pad + w, pad + w, r);
+      ctx.arcTo(pad + w, pad + w, pad, pad + w, r);
+      ctx.arcTo(pad, pad + w, pad, pad, r);
+      ctx.arcTo(pad, pad, pad + w, pad, r);
+      ctx.closePath();
+
+      const strokeGrad = ctx.createLinearGradient(pad, pad, pad + w, pad + w);
+      strokeGrad.addColorStop(0, 'rgba(255, 255, 255, 0.9)');
+      strokeGrad.addColorStop(0.5, 'rgba(186, 230, 253, 0.6)');
+      strokeGrad.addColorStop(1, 'rgba(251, 207, 232, 0.8)');
+      ctx.strokeStyle = strokeGrad;
+      ctx.lineWidth = 12;
+      ctx.stroke();
+      ctx.restore();
+
+      // 3. Draw 3D Glass Text "Hc"
+      ctx.save();
+      ctx.font = '900 210px "Plus Jakarta Sans", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+
+      const cx = 256;
+      const cy = 266;
+
+      // Text Soft Shadow
+      ctx.shadowColor = 'rgba(56, 189, 248, 0.35)';
+      ctx.shadowBlur = 25;
+      ctx.shadowOffsetY = 10;
+
+      // Text Glass Gradient
+      const textGrad = ctx.createLinearGradient(150, 150, 360, 360);
+      textGrad.addColorStop(0, '#38BDF8');   // Sky Blue
+      textGrad.addColorStop(0.5, '#60A5FA'); // Soft Blue
+      textGrad.addColorStop(1, '#F472B6');   // Pink
+      ctx.fillStyle = textGrad;
+      ctx.fillText('Hc', cx, cy);
+
+      // Text Glass Highlight Layer
+      ctx.shadowColor = 'transparent';
+      const textHighlight = ctx.createLinearGradient(150, 150, 360, 360);
+      textHighlight.addColorStop(0, 'rgba(255, 255, 255, 0.8)');
+      textHighlight.addColorStop(0.4, 'rgba(255, 255, 255, 0.2)');
+      textHighlight.addColorStop(1, 'rgba(255, 255, 255, 0)');
+      ctx.fillStyle = textHighlight;
+      ctx.fillText('Hc', cx - 2, cy - 2);
+
+      ctx.restore();
+
+      // Convert Canvas to Data URL & Set Icons
+      const dataUrl = canvas.toDataURL('image/png');
+      document.getElementById('appleTouchIcon').href = dataUrl;
+      document.getElementById('favicon').href = dataUrl;
+    }
+
+    document.addEventListener('DOMContentLoaded', generateGlassIcon);
+  </script>
 </head>
 <body class="flex justify-center bg-slate-100 min-h-screen">
 
@@ -440,11 +552,10 @@
 
     let currentUserId = null;
     let partnerId = localStorage.getItem('myhealth_partnerId') || null;
-    let viewUser = 'me'; // 'me' or 'partner'
+    let viewUser = 'me';
 
     let selectedDate = new Date().toISOString().split('T')[0];
 
-    // ローカル＆リモートデータ構造
     let mySettings = JSON.parse(localStorage.getItem('myhealth_settings')) || { goalCal: 2000, targetWeight: 53.0, prevSmokeAvg: 15 };
     let myLogs = JSON.parse(localStorage.getItem('myhealth_logs')) || {};
 
@@ -458,7 +569,6 @@
         currentUserId = user.uid;
         document.getElementById('myPairCode').textContent = currentUserId;
 
-        // 自分のデータリアルタイム同期
         onSnapshot(doc(db, "health_users", currentUserId), (docSnap) => {
           if (docSnap.exists()) {
             const remoteData = docSnap.data();
@@ -518,7 +628,6 @@
       initDateLog(selectedDate, activeLogs);
       const currentLog = activeLogs[selectedDate];
 
-      // 食事
       const mealTypes = ['breakfast', 'lunch', 'dinner', 'snack'];
       let totalIntakeCal = 0;
 
@@ -559,7 +668,6 @@
       document.getElementById('mealDiffLabel').textContent = remainingCal >= 0 ? '残り' : 'オーバー';
       document.getElementById('targetCalInput').value = activeSettings.goalCal;
 
-      // 体重
       const weight = currentLog.weight;
       const targetWeight = activeSettings.targetWeight || 53.0;
       document.getElementById('dashWeight').textContent = weight !== null ? weight : '-';
@@ -578,11 +686,9 @@
       document.getElementById('dashFat').textContent = currentLog.fat !== null ? currentLog.fat : '-';
       document.getElementById('inputFat').value = currentLog.fat !== null ? currentLog.fat : '';
 
-      // 睡眠
       document.getElementById('dashSleep').textContent = currentLog.sleep !== null ? currentLog.sleep : '-';
       document.getElementById('inputSleep').value = currentLog.sleep !== null ? currentLog.sleep : '';
 
-      // 喫煙
       const todaySmoked = currentLog.smoked || 0;
       document.getElementById('dashTodaySmoke').textContent = todaySmoked;
       document.getElementById('todaySmokeCount').textContent = todaySmoked;
@@ -678,7 +784,7 @@
       if (!isNaN(s)) myLogs[selectedDate].sleep = s;
 
       saveStateAndSync();
-      alert('睡眠データを保存しました！');
+      alert('睡眠データを記録しました！');
     };
 
     window.changeSmokeCount = function(delta) {
@@ -737,43 +843,4 @@
     };
 
     window.changeDate = function(newDate) {
-      if (!newDate) return;
-      selectedDate = newDate;
-      const d = new Date(selectedDate);
-      const days = ['Sun.', 'Mon.', 'Tue.', 'Wed.', 'Thu.', 'Fri.', 'Sat.'];
-      document.getElementById('headerDateDisplay').textContent = `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')} ${days[d.getDay()]}`;
-      renderAll();
-    };
-
-    window.openMealModal = function() { document.getElementById('mealModal').classList.remove('hidden'); };
-    window.closeMealModal = function() { document.getElementById('mealModal').classList.add('hidden'); };
-    window.openGoalCalModal = function() { document.getElementById('goalCalModal').classList.remove('hidden'); };
-    window.closeGoalCalModal = function() { document.getElementById('goalCalModal').classList.add('hidden'); };
-    window.openWeightGoalModal = function() { document.getElementById('targetWeightModal').classList.remove('hidden'); };
-    window.closeWeightGoalModal = function() { document.getElementById('targetWeightModal').classList.add('hidden'); };
-    window.togglePairModal = function() { document.getElementById('pairModal').classList.toggle('hidden'); };
-
-    window.switchTab = function(tabId) {
-      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-      document.getElementById(`tab-${tabId}`).classList.remove('hidden');
-      document.querySelectorAll('.nav-btn').forEach(btn => {
-        btn.classList.remove('text-sky-500');
-        btn.classList.add('text-slate-400');
-      });
-      const activeNav = document.getElementById(`nav-${tabId}`);
-      if (activeNav) {
-        activeNav.classList.remove('text-slate-400');
-        activeNav.classList.add('text-sky-500');
-      }
-    };
-
-    function escapeHtml(str) {
-      return str.replace(/[&<>"']/g, function(m) {
-        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
-      });
-    }
-
-    document.getElementById('datePicker').value = selectedDate;
-  </script>
-</body>
-</html>
+      if (!newDate
