@@ -5,402 +5,256 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>My Health Log</title>
   
-  <!-- Dynamic PWA / Apple Touch Icon -->
   <link rel="apple-touch-icon" id="appleTouchIcon" href="">
   <link rel="icon" id="favicon" href="">
   <meta name="apple-mobile-web-app-title" content="My Health">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
 
-  <!-- Tailwind CSS & FontAwesome -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;700&display=swap');
-    
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;700;900&display=swap');
     body {
       font-family: 'Plus Jakarta Sans', 'Noto Sans JP', sans-serif;
-      background: linear-gradient(135deg, #E0F2FE 0%, #BAE6FD 40%, #E0F2FE 70%, #F0F9FF 100%);
-      background-attachment: fixed;
-      color: #0F172A;
+      background: linear-gradient(180deg, #E0F2FE 0%, #F0F9FF 50%, #E0F2FE 100%);
+      color: #1E293B;
       touch-action: manipulation;
     }
-
-    /* 3D Glossy Dynamic Glassmorphism Base Styles */
-    .glass-header {
-      background: rgba(255, 255, 255, 0.55);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border-bottom: 1.5px solid rgba(255, 255, 255, 0.9);
-      box-shadow: 0 8px 32px rgba(14, 165, 233, 0.12), inset 0 2px 4px rgba(255, 255, 255, 0.9);
+    .puffy-card {
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      box-shadow: 0 20px 40px -15px rgba(14, 165, 233, 0.15),
+                  0 10px 20px -10px rgba(0, 0, 0, 0.04),
+                  inset 0 2px 4px rgba(255, 255, 255, 1);
     }
-
-    /* Calorie Panel - Sky Blue Ultra Glass */
-    .glass-panel-cal {
-      background: linear-gradient(145deg, rgba(240, 249, 255, 0.85) 0%, rgba(186, 230, 253, 0.65) 100%);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 2px solid rgba(255, 255, 255, 0.95);
-      box-shadow: 
-        0 20px 40px -15px rgba(14, 165, 233, 0.22),
-        inset 0 3px 6px rgba(255, 255, 255, 1),
-        inset 0 -4px 8px rgba(56, 189, 248, 0.2);
-    }
-
-    /* Smoke & Savings Panel - Glossy Pink Tint Glass */
-    .glass-panel-smoke {
-      background: linear-gradient(145deg, rgba(253, 242, 248, 0.85) 0%, rgba(251, 207, 232, 0.65) 100%);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 2px solid rgba(255, 255, 255, 0.95);
-      box-shadow: 
-        0 20px 40px -15px rgba(244, 114, 182, 0.22),
-        inset 0 3px 6px rgba(255, 255, 255, 1),
-        inset 0 -4px 8px rgba(244, 114, 182, 0.2);
-    }
-
-    /* Weight Panel - Lavender Gloss Glass */
-    .glass-panel-weight {
-      background: linear-gradient(145deg, rgba(245, 243, 255, 0.85) 0%, rgba(233, 213, 255, 0.65) 100%);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 2px solid rgba(255, 255, 255, 0.95);
-      box-shadow: 
-        0 20px 40px -15px rgba(168, 85, 247, 0.22),
-        inset 0 3px 6px rgba(255, 255, 255, 1),
-        inset 0 -4px 8px rgba(168, 85, 247, 0.18);
-    }
-
-    /* Sleep Panel - Soft Teal Glass */
-    .glass-panel-sleep {
-      background: linear-gradient(145deg, rgba(240, 253, 250, 0.85) 0%, rgba(204, 251, 241, 0.65) 100%);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 2px solid rgba(255, 255, 255, 0.95);
-      box-shadow: 
-        0 20px 40px -15px rgba(20, 184, 166, 0.2),
-        inset 0 3px 6px rgba(255, 255, 255, 1),
-        inset 0 -4px 8px rgba(20, 184, 166, 0.18);
-    }
-
-    /* Inner Glass Card Element */
-    .glass-card-inner {
-      background: rgba(255, 255, 255, 0.78);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
+    .puffy-card-blue {
+      background: linear-gradient(135deg, rgba(238, 242, 255, 0.85) 0%, rgba(224, 242, 254, 0.85) 100%);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       border: 1.5px solid rgba(255, 255, 255, 0.95);
-      box-shadow: 
-        0 8px 20px -4px rgba(0, 0, 0, 0.05),
-        inset 0 2px 4px rgba(255, 255, 255, 1),
-        inset 0 -2px 4px rgba(0, 0, 0, 0.02);
+      box-shadow: 0 16px 32px -10px rgba(56, 189, 248, 0.25),
+                  inset 0 2px 5px rgba(255, 255, 255, 1),
+                  inset 0 -2px 4px rgba(56, 189, 248, 0.1);
     }
-
-    /* Glossy 3D Button Style */
-    .glossy-btn {
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(241, 245, 249, 0.85) 100%);
-      border: 1.5px solid rgba(255, 255, 255, 1);
-      box-shadow: 
-        0 4px 14px rgba(0, 0, 0, 0.07),
-        inset 0 2px 2px rgba(255, 255, 255, 1);
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    .puffy-card-pink {
+      background: linear-gradient(135deg, rgba(253, 242, 248, 0.85) 0%, rgba(252, 231, 243, 0.85) 100%);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1.5px solid rgba(255, 255, 255, 0.95);
+      box-shadow: 0 16px 32px -10px rgba(244, 114, 182, 0.25),
+                  inset 0 2px 5px rgba(255, 255, 255, 1),
+                  inset 0 -2px 4px rgba(244, 114, 182, 0.1);
     }
-    .glossy-btn:active {
-      transform: scale(0.96);
-      box-shadow: 0 2px 6px rgba(0,0,0,0.05), inset 0 1px 1px rgba(0,0,0,0.05);
-    }
-
-    /* Circular SVG meter animations and drop shadow */
-    .circle-chart-circle {
-      transition: stroke-dasharray 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-      filter: drop-shadow(0px 4px 8px rgba(56, 189, 248, 0.35));
-    }
-
-    .pb-safe { padding-bottom: env(safe-area-inset-bottom, 1.25rem); }
+    .pb-safe { padding-bottom: env(safe-area-inset-bottom, 1rem); }
+    .circle-meter { transform: rotate(-90deg); }
+    .circle-meter-bg { stroke: rgba(226, 232, 240, 0.6); }
   </style>
-
-  <!-- DYNAMIC ICON GENERATOR SCRIPT -->
-  <script>
-    function generateGlassIcon() {
-      try {
-        const canvas = document.createElement('canvas');
-        canvas.width = 512;
-        canvas.height = 512;
-        const ctx = canvas.getContext('2d');
-
-        // Sky Blue Background Gradient
-        const bgGrad = ctx.createLinearGradient(0, 0, 512, 512);
-        bgGrad.addColorStop(0, '#E0F2FE');
-        bgGrad.addColorStop(1, '#BAE6FD');
-        ctx.fillStyle = bgGrad;
-        ctx.fillRect(0, 0, 512, 512);
-
-        const pad = 32;
-        const w = 512 - pad * 2;
-        const r = 96;
-
-        // Rounded Glass Card Shadow
-        ctx.save();
-        ctx.beginPath();
-        ctx.moveTo(pad + r, pad);
-        ctx.arcTo(pad + w, pad, pad + w, pad + w, r);
-        ctx.arcTo(pad + w, pad + w, pad, pad + w, r);
-        ctx.arcTo(pad, pad + w, pad, pad, r);
-        ctx.arcTo(pad, pad, pad + w, pad, r);
-        ctx.closePath();
-
-        ctx.shadowColor = 'rgba(14, 165, 233, 0.25)';
-        ctx.shadowBlur = 35;
-        ctx.shadowOffsetY = 15;
-
-        // Glass Base Gradient
-        const glassGrad = ctx.createLinearGradient(pad, pad, pad + w, pad + w);
-        glassGrad.addColorStop(0, 'rgba(255, 255, 255, 0.95)');
-        glassGrad.addColorStop(0.5, 'rgba(224, 242, 254, 0.75)');
-        glassGrad.addColorStop(1, 'rgba(252, 231, 243, 0.85)');
-        ctx.fillStyle = glassGrad;
-        ctx.fill();
-        ctx.restore();
-
-        // 3D Glass Text "Hc"
-        ctx.save();
-        ctx.font = '900 210px "Plus Jakarta Sans", sans-serif';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-
-        const textGrad = ctx.createLinearGradient(150, 150, 360, 360);
-        textGrad.addColorStop(0, '#38BDF8');
-        textGrad.addColorStop(1, '#F472B6');
-        ctx.fillStyle = textGrad;
-        ctx.fillText('Hc', 256, 266);
-        ctx.restore();
-
-        const dataUrl = canvas.toDataURL('image/png');
-        const iconEl = document.getElementById('appleTouchIcon');
-        const favEl = document.getElementById('favicon');
-        if (iconEl) iconEl.href = dataUrl;
-        if (favEl) favEl.href = dataUrl;
-      } catch(e) { console.log(e); }
-    }
-    document.addEventListener('DOMContentLoaded', generateGlassIcon);
-  </script>
 </head>
-<body class="flex justify-center min-h-screen">
+<body class="flex justify-center h-screen overflow-hidden">
 
-  <div class="w-full max-w-md min-h-screen flex flex-col relative pb-24 shadow-2xl bg-white/40 backdrop-blur-xl border-x border-white/60">
+  <div class="w-full max-w-md h-full flex flex-col shadow-2xl relative">
 
-    <!-- Header -->
-    <header class="glass-header text-slate-800 p-4 pt-6 sticky top-0 z-30 shadow-sm">
+    <!-- Header (Fixed Top) -->
+    <header class="bg-white/70 backdrop-blur-md sticky top-0 z-20 border-b border-white/80 p-4 pt-6 shadow-sm shrink-0">
       <div class="flex justify-between items-center">
         <div>
           <div class="flex items-center gap-2">
-            <span class="text-xs font-bold tracking-wider text-sky-700 uppercase" id="headerDateDisplay">2026/11/06 Fri.</span>
-            <input type="date" id="datePicker" onchange="window.changeDate(this.value)" class="bg-white/70 text-slate-700 text-[10px] px-2.5 py-0.5 rounded-full border border-white/80 focus:outline-none shadow-sm font-semibold">
+            <span class="text-xs font-bold tracking-wider text-sky-600 uppercase" id="headerDateDisplay">2026/11/06 Fri.</span>
+            <input type="date" id="datePicker" onchange="window.changeDate(this.value)" class="bg-sky-100/60 text-sky-800 text-[10px] font-bold px-2 py-0.5 rounded-full border border-sky-200 focus:outline-none">
           </div>
-          <h1 class="text-xl font-black tracking-tight flex items-center gap-2 mt-0.5 text-slate-800">
-            <i class="fa-solid fa-heart-pulse text-pink-500"></i> My Health Log
+          <h1 class="text-xl font-black tracking-tight flex items-center gap-2 mt-0.5 bg-gradient-to-r from-sky-500 to-pink-500 bg-clip-text text-transparent">
+            <i class="fa-solid fa-heart-pulse text-pink-400"></i> My Health Log
           </h1>
         </div>
-        
-        <div class="flex items-center gap-2">
-          <button onclick="window.togglePairModal()" class="w-10 h-10 rounded-2xl glossy-btn flex items-center justify-center text-sky-600 relative">
-            <i class="fa-solid fa-users text-sm"></i>
-            <span id="pairStatusDot" class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-rose-400 border-2 border-white rounded-full"></span>
-          </button>
-        </div>
+        <button onclick="window.togglePairModal()" class="w-10 h-10 rounded-2xl bg-white/80 flex items-center justify-center hover:bg-white transition text-sky-500 shadow-md border border-white relative">
+          <i class="fa-solid fa-users"></i>
+          <span id="pairStatusDot" class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-rose-400 border-2 border-white rounded-full"></span>
+        </button>
       </div>
     </header>
 
-    <!-- Unified Gradient Definitions for SVG Meters -->
-    <svg class="w-0 h-0 absolute" aria-hidden="true" focusable="false">
-      <defs>
-        <!-- Blue to Pink Progress Meter Gradient -->
-        <linearGradient id="meterGradUnified" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="#38BDF8" />
-          <stop offset="60%" stop-color="#818CF8" />
-          <stop offset="100%" stop-color="#F472B6" />
-        </linearGradient>
-      </defs>
-    </svg>
-
-    <!-- Main Content Area -->
-    <main class="flex-1 p-4 space-y-4 overflow-y-auto">
+    <!-- Main Content Area (Scrollable Inner Content) -->
+    <main class="flex-1 p-4 space-y-4 overflow-y-auto pb-24">
 
       <!-- DASHBOARD TAB -->
       <section id="tab-dashboard" class="tab-content space-y-4">
-        
-        <!-- 1. 食事・カロリー（最重要・最も大きいブロック） -->
-        <div class="glass-panel-cal rounded-3xl p-4 space-y-3">
-          <div class="flex justify-between items-center border-b border-white/70 pb-2">
-            <h2 class="text-xs font-black text-sky-900 tracking-wider flex items-center gap-2 uppercase">
-              <span class="w-2.5 h-2.5 rounded-full bg-sky-500 shadow-sm"></span> カロリー管理
-            </h2>
-            <button onclick="window.openGoalCalModal()" class="text-[10px] font-bold text-sky-800 glossy-btn px-3 py-1 rounded-full">
-              <i class="fa-solid fa-pen text-[9px] mr-1"></i>目標設定
+
+        <!-- 1. カロリー (1番大きいブロック) -->
+        <div class="puffy-card-blue rounded-3xl p-5 relative overflow-hidden">
+          <div class="flex justify-between items-center mb-4">
+            <div class="flex items-center gap-2">
+              <div class="w-7 h-7 rounded-xl bg-sky-500 text-white flex items-center justify-center text-xs shadow-sm">
+                <i class="fa-solid fa-utensils"></i>
+              </div>
+              <h2 class="text-base font-black text-slate-800">カロリー管理</h2>
+            </div>
+            <button onclick="window.openGoalCalModal()" class="text-[11px] font-bold text-sky-600 bg-white/80 px-2.5 py-1 rounded-full shadow-sm border border-sky-100">
+              目標設定
             </button>
           </div>
 
-          <!-- 2人分ドーナツメーター並列 -->
-          <div class="grid grid-cols-2 gap-3 pt-1">
-            
-            <!-- 自分（カロリー） -->
-            <div class="glass-card-inner rounded-2xl p-3 flex flex-col items-center text-center relative">
-              <span class="text-[11px] font-bold text-sky-700 bg-sky-200/80 border border-white px-3 py-0.5 rounded-full mb-1 shadow-sm">自分</span>
-              <div class="relative w-28 h-28 flex items-center justify-center my-1">
-                <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
-                  <path class="text-sky-900/10" stroke-width="4" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                  <path id="circleCalMe" class="circle-chart-circle" stroke-width="4" stroke-dasharray="0, 100" stroke-linecap="round" stroke="url(#meterGradUnified)" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+          <div class="grid grid-cols-2 gap-4">
+            <!-- 自分 -->
+            <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-3 flex flex-col items-center text-center shadow-sm border border-white">
+              <span class="text-xs font-black text-sky-600 mb-2">自分</span>
+              <div class="relative w-28 h-28 flex items-center justify-center">
+                <svg class="w-full h-full circle-meter" viewBox="0 0 100 100">
+                  <defs>
+                    <linearGradient id="calGradMe" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#38BDF8" />
+                      <stop offset="100%" stop-color="#F472B6" />
+                    </linearGradient>
+                  </defs>
+                  <circle class="circle-meter-bg" cx="50" cy="50" r="40" stroke-width="10" fill="none" />
+                  <circle id="meCalRing" cx="50" cy="50" r="40" stroke-width="10" stroke="url(#calGradMe)" stroke-dasharray="251.2" stroke-dashoffset="251.2" stroke-linecap="round" fill="none" class="transition-all duration-500" />
                 </svg>
-                <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                  <span class="text-[8px] text-slate-500 font-bold">摂取/目標</span>
-                  <span class="text-xs font-black text-slate-800 leading-tight" id="valCalMe">0</span>
-                  <span class="text-[9px] text-slate-500 font-medium">/ <span id="targetCalMe">2,000</span></span>
+                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                  <span class="text-sm font-black text-slate-800" id="meDashCal">0</span>
+                  <span class="text-[9px] text-slate-400 font-bold border-t border-slate-200 px-1 mt-0.5" id="meGoalCal">/ 2,000</span>
                 </div>
               </div>
-              <span class="text-[10px] font-extrabold text-sky-900 mt-1 bg-white/80 px-2 py-0.5 rounded-full border border-white" id="diffCalMe">残り 2,000 kcal</span>
+              <span class="text-[10px] font-bold text-slate-500 mt-2" id="meCalDiffLabel">残り 2,000 kcal</span>
             </div>
 
-            <!-- パートナー（カロリー） -->
-            <div class="glass-card-inner rounded-2xl p-3 flex flex-col items-center text-center relative">
-              <span class="text-[11px] font-bold text-slate-700 bg-slate-200/80 border border-white px-3 py-0.5 rounded-full mb-1 shadow-sm">相手</span>
-              <div class="relative w-28 h-28 flex items-center justify-center my-1">
-                <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
-                  <path class="text-sky-900/10" stroke-width="4" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                  <path id="circleCalPartner" class="circle-chart-circle" stroke-width="4" stroke-dasharray="0, 100" stroke-linecap="round" stroke="url(#meterGradUnified)" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+            <!-- パートナー -->
+            <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-3 flex flex-col items-center text-center shadow-sm border border-white">
+              <span class="text-xs font-black text-pink-500 mb-2">パートナー</span>
+              <div class="relative w-28 h-28 flex items-center justify-center">
+                <svg class="w-full h-full circle-meter" viewBox="0 0 100 100">
+                  <circle class="circle-meter-bg" cx="50" cy="50" r="40" stroke-width="10" fill="none" />
+                  <circle id="partnerCalRing" cx="50" cy="50" r="40" stroke-width="10" stroke="url(#calGradMe)" stroke-dasharray="251.2" stroke-dashoffset="251.2" stroke-linecap="round" fill="none" class="transition-all duration-500" />
                 </svg>
-                <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                  <span class="text-[8px] text-slate-500 font-bold">摂取/目標</span>
-                  <span class="text-xs font-black text-slate-800 leading-tight" id="valCalPartner">0</span>
-                  <span class="text-[9px] text-slate-500 font-medium">/ <span id="targetCalPartner">2,000</span></span>
+                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                  <span class="text-sm font-black text-slate-800" id="partnerDashCal">0</span>
+                  <span class="text-[9px] text-slate-400 font-bold border-t border-slate-200 px-1 mt-0.5" id="partnerGoalCal">/ 2,000</span>
                 </div>
               </div>
-              <span class="text-[10px] font-extrabold text-sky-900 mt-1 bg-white/80 px-2 py-0.5 rounded-full border border-white" id="diffCalPartner">残り 2,000 kcal</span>
+              <span class="text-[10px] font-bold text-slate-500 mt-2" id="partnerCalDiffLabel">残り 2,000 kcal</span>
             </div>
-
           </div>
         </div>
 
-        <!-- 2. 喫煙・節約メーター（2番目に大きいブロック） -->
-        <div class="glass-panel-smoke rounded-3xl p-4 space-y-3">
-          <div class="flex justify-between items-center border-b border-white/70 pb-2">
-            <h2 class="text-xs font-black text-pink-900 tracking-wider flex items-center gap-2 uppercase">
-              <span class="w-2.5 h-2.5 rounded-full bg-pink-500 shadow-sm"></span> 喫煙・節約メーター
-            </h2>
-            <button onclick="window.openSmokeConfigModal()" class="text-[10px] font-bold text-pink-800 glossy-btn px-3 py-1 rounded-full">
-              <i class="fa-solid fa-gear text-[9px] mr-1"></i>設定
+        <!-- 2. 喫煙・節約 (2番目に大きいブロック) -->
+        <div class="puffy-card-pink rounded-3xl p-5 relative overflow-hidden">
+          <div class="flex justify-between items-center mb-4">
+            <div class="flex items-center gap-2">
+              <div class="w-7 h-7 rounded-xl bg-pink-500 text-white flex items-center justify-center text-xs shadow-sm">
+                <i class="fa-solid fa-smoking"></i>
+              </div>
+              <h2 class="text-base font-black text-slate-800">喫煙・節約メーター</h2>
+            </div>
+            <button onclick="window.openSmokeSettingModal()" class="text-[11px] font-bold text-pink-600 bg-white/80 px-2.5 py-1 rounded-full shadow-sm border border-pink-100">
+              設定
             </button>
           </div>
 
-          <div class="grid grid-cols-2 gap-3 pt-1">
-            
-            <!-- 自分（喫煙・節約） -->
-            <div class="glass-card-inner rounded-2xl p-3 flex flex-col items-center text-center">
-              <span class="text-[11px] font-bold text-sky-700 bg-sky-200/80 border border-white px-3 py-0.5 rounded-full mb-1 shadow-sm">自分</span>
-              
-              <!-- 節約達成メーター（初期＝満額100%、吸うと減少） -->
-              <div class="relative w-24 h-24 flex items-center justify-center my-1">
-                <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
-                  <path class="text-pink-900/10" stroke-width="4" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                  <path id="circleSmokeMe" class="circle-chart-circle" stroke-width="4" stroke-dasharray="100, 100" stroke-linecap="round" stroke="url(#meterGradUnified)" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+          <div class="grid grid-cols-2 gap-4">
+            <!-- 自分 -->
+            <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-3 flex flex-col items-center text-center shadow-sm border border-white">
+              <div class="flex justify-between items-center w-full px-1 mb-1">
+                <span class="text-xs font-black text-sky-600">自分</span>
+                <span class="text-[9px] font-bold text-slate-400">平均<span id="meAvgSmoke">15</span>本/日</span>
+              </div>
+              <div class="relative w-28 h-28 flex items-center justify-center">
+                <svg class="w-full h-full circle-meter" viewBox="0 0 100 100">
+                  <circle class="circle-meter-bg" cx="50" cy="50" r="40" stroke-width="10" fill="none" />
+                  <circle id="meSmokeRing" cx="50" cy="50" r="40" stroke-width="10" stroke="url(#calGradMe)" stroke-dasharray="251.2" stroke-dashoffset="0" stroke-linecap="round" fill="none" class="transition-all duration-500" />
                 </svg>
-                <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                  <span class="text-[8px] text-slate-500 font-bold">本日喫煙</span>
-                  <span class="text-sm font-black text-slate-800 leading-tight" id="valSmokeMe">0本</span>
-                  <span class="text-[8px] text-slate-500">基準:<span id="baseSmokeMe">15</span>本/日</span>
+                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                  <span class="text-base font-black text-slate-800" id="meTodaySmoke">0</span>
+                  <span class="text-[9px] text-slate-400 font-bold border-t border-slate-200 px-1 mt-0.5">本 / 本日</span>
                 </div>
               </div>
-
-              <!-- 詳細金額データ -->
-              <div class="w-full text-left space-y-1 mt-2 text-[10px] bg-white/80 p-2.5 rounded-xl border border-white shadow-sm">
-                <div class="flex justify-between"><span class="text-slate-500 font-medium">本日喫煙:</span><span class="font-bold text-slate-800" id="statTodaySmokeMe">0本</span></div>
-                <div class="flex justify-between"><span class="text-slate-500 font-medium">1ヶ月購入費:</span><span class="font-bold text-slate-800" id="statMonthCostMe">¥0</span></div>
-                <div class="flex justify-between border-t border-slate-200/60 pt-1"><span class="text-slate-500 font-medium">本日の節約額:</span><span class="font-black text-pink-600" id="statSaveMe">¥480</span></div>
+              <div class="mt-2 text-left w-full space-y-0.5 text-[10px] bg-white/60 p-2 rounded-xl">
+                <div class="flex justify-between"><span class="text-slate-400">今月予想:</span><span class="font-bold text-slate-700"><span id="mePacksMonth">23</span>箱 (<span id="meCostMonth">¥14,720</span>)</span></div>
+                <div class="flex justify-between"><span class="text-slate-400">本日節約:</span><span class="font-bold text-pink-600" id="meTodaySavings">¥480</span></div>
               </div>
             </div>
 
-            <!-- パートナー（喫煙・節約） -->
-            <div class="glass-card-inner rounded-2xl p-3 flex flex-col items-center text-center">
-              <span class="text-[11px] font-bold text-slate-700 bg-slate-200/80 border border-white px-3 py-0.5 rounded-full mb-1 shadow-sm">相手</span>
-              
-              <div class="relative w-24 h-24 flex items-center justify-center my-1">
-                <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
-                  <path class="text-pink-900/10" stroke-width="4" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                  <path id="circleSmokePartner" class="circle-chart-circle" stroke-width="4" stroke-dasharray="100, 100" stroke-linecap="round" stroke="url(#meterGradUnified)" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+            <!-- パートナー -->
+            <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-3 flex flex-col items-center text-center shadow-sm border border-white">
+              <div class="flex justify-between items-center w-full px-1 mb-1">
+                <span class="text-xs font-black text-pink-500">パートナー</span>
+                <span class="text-[9px] font-bold text-slate-400">平均<span id="partnerAvgSmoke">15</span>本/日</span>
+              </div>
+              <div class="relative w-28 h-28 flex items-center justify-center">
+                <svg class="w-full h-full circle-meter" viewBox="0 0 100 100">
+                  <circle class="circle-meter-bg" cx="50" cy="50" r="40" stroke-width="10" fill="none" />
+                  <circle id="partnerSmokeRing" cx="50" cy="50" r="40" stroke-width="10" stroke="url(#calGradMe)" stroke-dasharray="251.2" stroke-dashoffset="0" stroke-linecap="round" fill="none" class="transition-all duration-500" />
                 </svg>
-                <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                  <span class="text-[8px] text-slate-500 font-bold">本日喫煙</span>
-                  <span class="text-sm font-black text-slate-800 leading-tight" id="valSmokePartner">0本</span>
-                  <span class="text-[8px] text-slate-500">基準:<span id="baseSmokePartner">15</span>本/日</span>
+                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                  <span class="text-base font-black text-slate-800" id="partnerTodaySmoke">0</span>
+                  <span class="text-[9px] text-slate-400 font-bold border-t border-slate-200 px-1 mt-0.5">本 / 本日</span>
                 </div>
               </div>
-
-              <div class="w-full text-left space-y-1 mt-2 text-[10px] bg-white/80 p-2.5 rounded-xl border border-white shadow-sm">
-                <div class="flex justify-between"><span class="text-slate-500 font-medium">本日喫煙:</span><span class="font-bold text-slate-800" id="statTodaySmokePartner">0本</span></div>
-                <div class="flex justify-between"><span class="text-slate-500 font-medium">1ヶ月購入費:</span><span class="font-bold text-slate-800" id="statMonthCostPartner">¥0</span></div>
-                <div class="flex justify-between border-t border-slate-200/60 pt-1"><span class="text-slate-500 font-medium">本日の節約額:</span><span class="font-black text-pink-600" id="statSavePartner">¥480</span></div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-
-        <!-- 3. 体重（自分の下に相手のデータ） -->
-        <div class="glass-panel-weight rounded-3xl p-4 space-y-3">
-          <div class="flex justify-between items-center border-b border-white/70 pb-2">
-            <h2 class="text-xs font-black text-purple-900 tracking-wider flex items-center gap-2 uppercase">
-              <i class="fa-solid fa-weight-scale text-purple-600"></i> 体重データ
-            </h2>
-            <button onclick="window.openWeightGoalModal()" class="text-[10px] font-bold text-purple-800 glossy-btn px-3 py-1 rounded-full">
-              <i class="fa-solid fa-pen text-[9px] mr-1"></i>目標設定
-            </button>
-          </div>
-
-          <div class="space-y-2">
-            <!-- 自分（体重） -->
-            <div class="glass-card-inner rounded-2xl p-3 flex items-center justify-between">
-              <div class="flex items-center gap-2.5">
-                <span class="text-[10px] font-bold text-sky-700 bg-sky-200/80 border border-white px-3 py-0.5 rounded-full shadow-sm">自分</span>
-                <span class="text-base font-black text-slate-800" id="weightValMe">- <span class="text-xs font-normal">kg</span></span>
-              </div>
-              <div class="text-right text-xs">
-                <span class="text-[10px] text-slate-500 font-medium">目標: <span id="weightTargetMe" class="font-bold">53.0</span>kg</span>
-                <span class="font-black text-pink-600 ml-2" id="weightDiffMe">あと - kg</span>
-              </div>
-            </div>
-
-            <!-- パートナー（体重） -->
-            <div class="glass-card-inner rounded-2xl p-3 flex items-center justify-between">
-              <div class="flex items-center gap-2.5">
-                <span class="text-[10px] font-bold text-slate-700 bg-slate-200/80 border border-white px-3 py-0.5 rounded-full shadow-sm">相手</span>
-                <span class="text-base font-black text-slate-800" id="weightValPartner">- <span class="text-xs font-normal">kg</span></span>
-              </div>
-              <div class="text-right text-xs">
-                <span class="text-[10px] text-slate-500 font-medium">目標: <span id="weightTargetPartner" class="font-bold">53.0</span>kg</span>
-                <span class="font-black text-pink-600 ml-2" id="weightDiffPartner">あと - kg</span>
+              <div class="mt-2 text-left w-full space-y-0.5 text-[10px] bg-white/60 p-2 rounded-xl">
+                <div class="flex justify-between"><span class="text-slate-400">今月予想:</span><span class="font-bold text-slate-700"><span id="partnerPacksMonth">23</span>箱 (<span id="partnerCostMonth">¥14,720</span>)</span></div>
+                <div class="flex justify-between"><span class="text-slate-400">本日節約:</span><span class="font-bold text-pink-600" id="partnerTodaySavings">¥480</span></div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- 4. 睡眠（自分の下に相手のデータ） -->
-        <div class="glass-panel-sleep rounded-3xl p-4 space-y-3">
-          <div class="flex justify-between items-center border-b border-white/70 pb-2">
-            <h2 class="text-xs font-black text-teal-900 tracking-wider flex items-center gap-2 uppercase">
-              <i class="fa-solid fa-moon text-teal-600"></i> 睡眠記録
-            </h2>
+        <!-- 3. 体重 (縦並び) -->
+        <div class="puffy-card rounded-3xl p-4 space-y-3">
+          <div class="flex justify-between items-center">
+            <h3 class="text-xs font-black text-slate-600 flex items-center gap-1.5">
+              <i class="fa-solid fa-weight-scale text-sky-500"></i> 体重データ
+            </h3>
+            <button onclick="window.openWeightGoalModal()" class="text-[10px] font-bold text-sky-600 bg-sky-50 px-2 py-0.5 rounded-full border border-sky-100">
+              目標設定
+            </button>
           </div>
 
-          <div class="space-y-2">
-            <!-- 自分（睡眠） -->
-            <div class="glass-card-inner rounded-2xl p-3 flex items-center justify-between">
-              <span class="text-[10px] font-bold text-sky-700 bg-sky-200/80 border border-white px-3 py-0.5 rounded-full shadow-sm">自分</span>
-              <span class="text-base font-black text-slate-800" id="sleepValMe">- <span class="text-xs font-normal">時間</span></span>
+          <!-- 自分 -->
+          <div class="bg-white/80 p-3 rounded-2xl flex justify-between items-center border border-white shadow-sm">
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-black text-sky-600 bg-sky-100 px-2 py-0.5 rounded-md">自分</span>
+              <span class="text-lg font-black text-slate-800" id="meDashWeight">-</span><span class="text-xs text-slate-400">kg</span>
             </div>
+            <div class="text-right text-xs">
+              <span class="text-slate-400 text-[10px]">目標: <span id="meTargetWeight">53.0</span>kg</span>
+              <div class="font-extrabold text-pink-500 text-xs">あと <span id="meWeightDiff">-</span> kg</div>
+            </div>
+          </div>
 
-            <!-- パートナー（睡眠） -->
-            <div class="glass-card-inner rounded-2xl p-3 flex items-center justify-between">
-              <span class="text-[10px] font-bold text-slate-700 bg-slate-200/80 border border-white px-3 py-0.5 rounded-full shadow-sm">相手</span>
-              <span class="text-base font-black text-slate-800" id="sleepValPartner">- <span class="text-xs font-normal">時間</span></span>
+          <!-- パートナー -->
+          <div class="bg-white/80 p-3 rounded-2xl flex justify-between items-center border border-white shadow-sm">
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-black text-pink-500 bg-pink-100 px-2 py-0.5 rounded-md">パートナー</span>
+              <span class="text-lg font-black text-slate-800" id="partnerDashWeight">-</span><span class="text-xs text-slate-400">kg</span>
+            </div>
+            <div class="text-right text-xs">
+              <span class="text-slate-400 text-[10px]">目標: <span id="partnerTargetWeight">53.0</span>kg</span>
+              <div class="font-extrabold text-pink-500 text-xs">あと <span id="partnerWeightDiff">-</span> kg</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. 睡眠 (縦並び) -->
+        <div class="puffy-card rounded-3xl p-4 space-y-3">
+          <h3 class="text-xs font-black text-slate-600 flex items-center gap-1.5">
+            <i class="fa-solid fa-moon text-indigo-500"></i> 睡眠記録
+          </h3>
+
+          <!-- 自分 -->
+          <div class="bg-white/80 p-3 rounded-2xl flex justify-between items-center border border-white shadow-sm">
+            <span class="text-xs font-black text-sky-600 bg-sky-100 px-2 py-0.5 rounded-md">自分</span>
+            <div>
+              <span class="text-lg font-black text-slate-800" id="meDashSleep">-</span>
+              <span class="text-xs text-slate-500">時間</span>
+            </div>
+          </div>
+
+          <!-- パートナー -->
+          <div class="bg-white/80 p-3 rounded-2xl flex justify-between items-center border border-white shadow-sm">
+            <span class="text-xs font-black text-pink-500 bg-pink-100 px-2 py-0.5 rounded-md">パートナー</span>
+            <div>
+              <span class="text-lg font-black text-slate-800" id="partnerDashSleep">-</span>
+              <span class="text-xs text-slate-500">時間</span>
             </div>
           </div>
         </div>
@@ -409,89 +263,123 @@
 
       <!-- MEAL LOG TAB -->
       <section id="tab-meals" class="tab-content space-y-4 hidden">
-        <div class="glass-panel-cal p-4 rounded-3xl space-y-3">
-          <div class="flex justify-between items-center">
-            <h2 class="text-base font-black text-slate-800">食事入力・記録</h2>
-            <button onclick="window.openMealModal()" class="bg-sky-500 text-white font-bold text-xs px-3.5 py-2 rounded-full shadow-md hover:bg-sky-600 transition">
-              + 食事を追加
-            </button>
+        <button onclick="window.openMealModal()" class="w-full bg-gradient-to-r from-sky-400 to-sky-500 text-white font-bold py-3.5 px-4 rounded-2xl shadow-md flex items-center justify-center gap-2">
+          <i class="fa-solid fa-plus"></i> 食事を追加記録する
+        </button>
+
+        <div class="space-y-3">
+          <div class="puffy-card p-4 rounded-2xl">
+            <div class="flex justify-between items-center mb-2 pb-1 border-b border-slate-100">
+              <span class="font-bold text-sm text-slate-700 flex items-center gap-1.5"><i class="fa-solid fa-sun text-amber-400"></i> 朝食</span>
+              <span class="text-xs font-bold text-sky-600" id="breakfastTotal">0 kcal</span>
+            </div>
+            <div id="breakfastList" class="space-y-2 text-sm"></div>
           </div>
-          <div class="space-y-2" id="mealDetailList"></div>
+
+          <div class="puffy-card p-4 rounded-2xl">
+            <div class="flex justify-between items-center mb-2 pb-1 border-b border-slate-100">
+              <span class="font-bold text-sm text-slate-700 flex items-center gap-1.5"><i class="fa-solid fa-cloud-sun text-sky-400"></i> 昼食</span>
+              <span class="text-xs font-bold text-sky-600" id="lunchTotal">0 kcal</span>
+            </div>
+            <div id="lunchList" class="space-y-2 text-sm"></div>
+          </div>
+
+          <div class="puffy-card p-4 rounded-2xl">
+            <div class="flex justify-between items-center mb-2 pb-1 border-b border-slate-100">
+              <span class="font-bold text-sm text-slate-700 flex items-center gap-1.5"><i class="fa-solid fa-moon text-indigo-400"></i> 夕食</span>
+              <span class="text-xs font-bold text-sky-600" id="dinnerTotal">0 kcal</span>
+            </div>
+            <div id="dinnerList" class="space-y-2 text-sm"></div>
+          </div>
+
+          <div class="puffy-card p-4 rounded-2xl">
+            <div class="flex justify-between items-center mb-2 pb-1 border-b border-slate-100">
+              <span class="font-bold text-sm text-slate-700 flex items-center gap-1.5"><i class="fa-solid fa-cookie-bite text-pink-400"></i> 間食・その他</span>
+              <span class="text-xs font-bold text-sky-600" id="snackTotal">0 kcal</span>
+            </div>
+            <div id="snackList" class="space-y-2 text-sm"></div>
+          </div>
         </div>
       </section>
 
       <!-- BODY LOG TAB -->
       <section id="tab-body" class="tab-content space-y-4 hidden">
-        <div class="glass-panel-weight p-4 rounded-3xl space-y-4">
-          <h2 class="text-base font-black text-slate-800">身体・睡眠データ入力</h2>
+        <div class="puffy-card p-5 rounded-3xl space-y-3">
+          <h3 class="text-sm font-bold text-slate-700 flex items-center gap-2">
+            <i class="fa-solid fa-weight-scale text-sky-500"></i> 体重の入力 (自分)
+          </h3>
           <form onsubmit="window.handleBodySubmit(event)" class="space-y-3">
             <div>
-              <label class="text-xs font-bold text-slate-700 block mb-1">現在の体重 (kg)</label>
-              <input type="number" step="0.1" id="inputWeight" placeholder="58.4" class="w-full bg-white/80 border border-white rounded-xl p-2.5 text-sm font-bold focus:outline-none shadow-sm">
+              <label class="text-xs font-semibold text-slate-500 block mb-1">現在の体重 (kg)</label>
+              <input type="number" step="0.1" id="inputWeight" placeholder="53.0" class="w-full bg-white/90 border border-slate-200 rounded-xl p-3 text-sm font-bold text-slate-800 shadow-inner">
             </div>
-            <div>
-              <label class="text-xs font-bold text-slate-700 block mb-1">体脂肪率 (%) [詳細用]</label>
-              <input type="number" step="0.1" id="inputFat" placeholder="21.2" class="w-full bg-white/80 border border-white rounded-xl p-2.5 text-sm font-bold focus:outline-none shadow-sm">
-            </div>
-            <button type="submit" class="w-full bg-purple-600 text-white font-bold py-2.5 rounded-xl shadow-md text-sm hover:bg-purple-700 transition">身体データを更新</button>
+            <button type="submit" class="w-full bg-sky-500 text-white font-bold py-3 rounded-xl shadow-md text-sm">
+              体重データを更新
+            </button>
           </form>
+        </div>
 
-          <form onsubmit="window.handleSleepSubmit(event)" class="space-y-3 pt-3 border-t border-white/60">
+        <div class="puffy-card p-5 rounded-3xl space-y-3">
+          <h3 class="text-sm font-bold text-slate-700 flex items-center gap-2">
+            <i class="fa-solid fa-moon text-indigo-500"></i> 睡眠時間の入力 (自分)
+          </h3>
+          <form onsubmit="window.handleSleepSubmit(event)" class="space-y-3">
             <div>
-              <label class="text-xs font-bold text-slate-700 block mb-1">本日の睡眠時間 (時間)</label>
-              <input type="number" step="0.5" id="inputSleep" placeholder="7.5" class="w-full bg-white/80 border border-white rounded-xl p-2.5 text-sm font-bold focus:outline-none shadow-sm">
+              <label class="text-xs font-semibold text-slate-500 block mb-1">睡眠時間 (時間)</label>
+              <input type="number" step="0.5" id="inputSleep" placeholder="7.5" class="w-full bg-white/90 border border-slate-200 rounded-xl p-3 text-sm font-bold text-slate-800 shadow-inner">
             </div>
-            <button type="submit" class="w-full bg-teal-600 text-white font-bold py-2.5 rounded-xl shadow-md text-sm hover:bg-teal-700 transition">睡眠データを更新</button>
+            <button type="submit" class="w-full bg-indigo-500 text-white font-bold py-3 rounded-xl shadow-md text-sm">
+              睡眠データを記録
+            </button>
           </form>
         </div>
       </section>
 
       <!-- SMOKING LOG TAB -->
       <section id="tab-smoking" class="tab-content space-y-4 hidden">
-        <div class="glass-panel-smoke p-4 rounded-3xl space-y-4 text-center">
-          <h2 class="text-base font-black text-slate-800">本日の喫煙本数記録</h2>
-          <div class="text-4xl font-black text-pink-600 drop-shadow-sm" id="tabSmokingCount">0 本</div>
-          <div class="flex justify-center gap-3">
-            <button onclick="window.changeSmokeCount(-1)" class="w-12 h-12 rounded-2xl glossy-btn font-black text-xl text-slate-700">-</button>
-            <button onclick="window.changeSmokeCount(1)" class="flex-1 bg-pink-500 text-white font-bold py-3 rounded-2xl shadow-md hover:bg-pink-600 transition">+ 1本吸った</button>
+        <div class="puffy-card p-5 rounded-3xl text-center space-y-3">
+          <span class="text-xs font-bold text-slate-400 block">本日の喫煙本数 (自分)</span>
+          <div class="text-5xl font-black text-slate-800" id="todaySmokeCount">0</div>
+          <div class="flex justify-center gap-3 pt-2">
+            <button onclick="window.changeSmokeCount(-1)" class="w-14 h-14 rounded-2xl bg-white shadow-md font-black text-2xl text-slate-700 border border-slate-100">-</button>
+            <button onclick="window.changeSmokeCount(1)" class="flex-1 bg-gradient-to-r from-pink-500 to-rose-400 text-white font-bold py-3.5 rounded-2xl shadow-md text-base">+ 1本吸った</button>
           </div>
         </div>
       </section>
 
     </main>
 
-    <!-- Bottom Navigation Bar -->
-    <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-white/75 backdrop-blur-md border-t border-white/80 flex justify-around items-center py-2.5 z-40 pb-safe shadow-lg">
-      <button onclick="window.switchTab('dashboard')" id="nav-dashboard" class="nav-btn text-sky-600 flex flex-col items-center">
+    <!-- Navigation Bar (Fixed Bottom) -->
+    <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-white/80 backdrop-blur-md border-t border-white/80 flex justify-around items-center py-2.5 z-30 pb-safe shadow-lg">
+      <button onclick="window.switchTab('dashboard')" id="nav-dashboard" class="nav-btn text-sky-500 flex flex-col items-center">
         <i class="fa-solid fa-house text-lg"></i>
-        <span class="text-[10px] font-bold mt-0.5">ホーム</span>
+        <span class="text-[10px] font-bold">ホーム</span>
       </button>
       <button onclick="window.switchTab('meals')" id="nav-meals" class="nav-btn text-slate-400 flex flex-col items-center">
         <i class="fa-solid fa-utensils text-lg"></i>
-        <span class="text-[10px] font-bold mt-0.5">食事</span>
+        <span class="text-[10px] font-bold">食事記録</span>
       </button>
       <button onclick="window.switchTab('body')" id="nav-body" class="nav-btn text-slate-400 flex flex-col items-center">
         <i class="fa-solid fa-heart-pulse text-lg"></i>
-        <span class="text-[10px] font-bold mt-0.5">身体・睡眠</span>
+        <span class="text-[10px] font-bold">体重・睡眠</span>
       </button>
       <button onclick="window.switchTab('smoking')" id="nav-smoking" class="nav-btn text-slate-400 flex flex-col items-center">
         <i class="fa-solid fa-smoking text-lg"></i>
-        <span class="text-[10px] font-bold mt-0.5">喫煙・節約</span>
+        <span class="text-[10px] font-bold">喫煙</span>
       </button>
     </nav>
 
     <!-- MODALS -->
-    <!-- Food Logging Modal -->
-    <div id="mealModal" class="fixed inset-0 bg-slate-900/30 backdrop-blur-sm z-50 flex items-end justify-center hidden">
-      <div class="bg-white/90 backdrop-blur-xl w-full max-w-md rounded-t-3xl p-5 space-y-4 shadow-2xl border-t border-white">
-        <div class="flex justify-between items-center border-b border-slate-200 pb-2">
-          <h3 class="text-base font-bold text-slate-800">食事記録を追加</h3>
+    <div id="mealModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-end justify-center hidden">
+      <div class="bg-white w-full max-w-md rounded-t-3xl p-5 space-y-4 shadow-2xl">
+        <div class="flex justify-between items-center border-b border-slate-100 pb-2">
+          <h3 class="text-base font-bold text-slate-800">食事を記録する</h3>
           <button onclick="window.closeMealModal()" class="text-slate-400 text-lg"><i class="fa-solid fa-xmark"></i></button>
         </div>
         <form onsubmit="window.handleAddMeal(event)" class="space-y-3">
           <div>
             <label class="text-xs font-semibold text-slate-500 block mb-1">区分</label>
-            <select id="mealTypeSelect" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm font-bold">
+            <select id="mealTypeSelect" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm font-bold text-slate-800">
               <option value="breakfast">朝食</option>
               <option value="lunch" selected>昼食</option>
               <option value="dinner">夕食</option>
@@ -500,27 +388,26 @@
           </div>
           <div>
             <label class="text-xs font-semibold text-slate-500 block mb-1">メニュー名</label>
-            <input type="text" id="mealNameInput" placeholder="例：サラダ" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm">
+            <input type="text" id="mealNameInput" placeholder="例：サラダ" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm text-slate-800">
           </div>
           <div>
             <label class="text-xs font-semibold text-slate-500 block mb-1">カロリー (kcal)</label>
-            <input type="number" id="mealCalInput" placeholder="例：450" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm font-bold">
+            <input type="number" id="mealCalInput" placeholder="例：450" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm font-bold text-slate-800">
           </div>
           <div class="pt-2 flex gap-2">
             <button type="button" onclick="window.closeMealModal()" class="flex-1 bg-slate-100 text-slate-600 font-bold py-2.5 rounded-xl text-sm">キャンセル</button>
-            <button type="submit" class="flex-1 bg-sky-500 text-white font-bold py-2.5 rounded-xl shadow-md text-sm">保存</button>
+            <button type="submit" class="flex-1 bg-sky-500 text-white font-bold py-2.5 rounded-xl shadow-md text-sm">追加保存</button>
           </div>
         </form>
       </div>
     </div>
 
-    <!-- Goal Calorie Modal -->
-    <div id="goalCalModal" class="fixed inset-0 bg-slate-900/30 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-      <div class="bg-white/90 backdrop-blur-xl w-full max-w-xs rounded-3xl p-5 space-y-4 shadow-2xl border border-white">
-        <h3 class="text-base font-bold text-slate-800">目標カロリー設定</h3>
+    <div id="goalCalModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+      <div class="bg-white w-full max-w-xs rounded-3xl p-5 space-y-4 shadow-2xl">
+        <h3 class="text-base font-bold text-slate-800">目標カロリー設定 (自分)</h3>
         <div>
           <label class="text-xs font-semibold text-slate-500 block mb-1">1日の目標カロリー (kcal)</label>
-          <input type="number" id="targetCalInput" value="2000" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-base font-bold">
+          <input type="number" id="targetCalInput" value="2000" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-base font-bold text-slate-800">
         </div>
         <div class="flex gap-2">
           <button onclick="window.closeGoalCalModal()" class="flex-1 bg-slate-100 text-slate-600 font-bold py-2 rounded-xl text-sm">キャンセル</button>
@@ -529,50 +416,47 @@
       </div>
     </div>
 
-    <!-- Goal Weight Modal -->
-    <div id="targetWeightModal" class="fixed inset-0 bg-slate-900/30 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-      <div class="bg-white/90 backdrop-blur-xl w-full max-w-xs rounded-3xl p-5 space-y-4 shadow-2xl border border-white">
-        <h3 class="text-base font-bold text-slate-800">目標体重設定</h3>
+    <div id="targetWeightModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+      <div class="bg-white w-full max-w-xs rounded-3xl p-5 space-y-4 shadow-2xl">
+        <h3 class="text-base font-bold text-slate-800">目標体重設定 (自分)</h3>
         <div>
           <label class="text-xs font-semibold text-slate-500 block mb-1">目標体重 (kg)</label>
-          <input type="number" step="0.1" id="targetWeightInput" value="53.0" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-base font-bold">
+          <input type="number" step="0.1" id="targetWeightInput" value="53.0" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-base font-bold text-slate-800">
         </div>
         <div class="flex gap-2">
           <button onclick="window.closeWeightGoalModal()" class="flex-1 bg-slate-100 text-slate-600 font-bold py-2 rounded-xl text-sm">キャンセル</button>
-          <button onclick="window.saveTargetWeight()" class="flex-1 bg-purple-600 text-white font-bold py-2 rounded-xl text-sm shadow">保存</button>
+          <button onclick="window.saveTargetWeight()" class="flex-1 bg-indigo-500 text-white font-bold py-2 rounded-xl text-sm shadow">保存</button>
         </div>
       </div>
     </div>
 
-    <!-- Smoke Base Config Modal -->
-    <div id="smokeConfigModal" class="fixed inset-0 bg-slate-900/30 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-      <div class="bg-white/90 backdrop-blur-xl w-full max-w-xs rounded-3xl p-5 space-y-4 shadow-2xl border border-white">
-        <h3 class="text-base font-bold text-slate-800">喫煙・節約基準設定</h3>
+    <div id="smokeSettingModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+      <div class="bg-white w-full max-w-xs rounded-3xl p-5 space-y-4 shadow-2xl">
+        <h3 class="text-base font-bold text-slate-800">喫煙設定 (自分)</h3>
         <div>
-          <label class="text-xs font-semibold text-slate-500 block mb-1">以前の1日あたりの平均喫煙本数</label>
-          <input type="number" id="inputPrevSmokeAvg" value="15" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-base font-bold">
-          <p class="text-[10px] text-slate-400 mt-1.5 leading-relaxed">※1ヶ月(30日)あたりの購入箱数・たばこ代(1箱640円)が自動で計算されます。</p>
+          <label class="text-xs font-semibold text-slate-500 block mb-1">1日の平均喫煙本数</label>
+          <input type="number" id="prevSmokeAvgInput" value="15" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-base font-bold text-slate-800">
         </div>
         <div class="flex gap-2">
-          <button onclick="window.closeSmokeConfigModal()" class="flex-1 bg-slate-100 text-slate-600 font-bold py-2 rounded-xl text-sm">キャンセル</button>
-          <button onclick="window.saveSmokeConfig()" class="flex-1 bg-pink-500 text-white font-bold py-2 rounded-xl text-sm shadow">保存</button>
+          <button onclick="window.closeSmokeSettingModal()" class="flex-1 bg-slate-100 text-slate-600 font-bold py-2 rounded-xl text-sm">キャンセル</button>
+          <button onclick="window.saveSmokeSetting()" class="flex-1 bg-pink-500 text-white font-bold py-2 rounded-xl text-sm shadow">保存</button>
         </div>
       </div>
     </div>
 
-    <!-- Partner Pairing Modal -->
-    <div id="pairModal" class="fixed inset-0 bg-slate-900/30 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-      <div class="bg-white/90 backdrop-blur-xl w-full max-w-xs rounded-3xl p-5 space-y-4 shadow-2xl border border-white">
+    <!-- PAIRING MODAL -->
+    <div id="pairModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+      <div class="bg-white w-full max-w-xs rounded-3xl p-5 space-y-4 shadow-2xl">
         <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
           <i class="fa-solid fa-users text-sky-500"></i> パートナー共有設定
         </h3>
         <div>
           <label class="text-xs text-slate-500 block mb-1">あなたのコード (タップでコピー)</label>
-          <div onclick="window.copyMyCode()" class="bg-slate-100/80 p-2.5 rounded-xl text-center font-mono font-bold text-slate-700 cursor-pointer hover:bg-slate-200 transition" id="myPairCode">取得中...</div>
+          <div onclick="window.copyMyCode()" class="bg-slate-100 p-3 rounded-xl text-center font-mono font-bold text-slate-700 cursor-pointer hover:bg-slate-200 transition text-xs" id="myPairCode">取得中...</div>
         </div>
         <div>
           <label class="text-xs text-slate-500 block mb-1">相手のコードを入力</label>
-          <input type="text" id="partnerCodeInput" placeholder="相手のコードを貼り付け" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-center font-mono font-bold">
+          <input type="text" id="partnerCodeInput" placeholder="相手のコードを貼り付け" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-center font-mono font-bold text-xs">
         </div>
         <div class="flex gap-2">
           <button onclick="window.togglePairModal()" class="flex-1 bg-slate-100 text-slate-600 font-bold py-2 rounded-xl text-xs">閉じる</button>
@@ -583,7 +467,64 @@
 
   </div>
 
-  <!-- FIREBASE INTEGRATION & APPLICATION LOGIC -->
+  <!-- ICON GENERATION SCRIPT -->
+  <script>
+    try {
+      const canvas = document.createElement('canvas');
+      canvas.width = 512;
+      canvas.height = 512;
+      const ctx = canvas.getContext('2d');
+
+      const bgGrad = ctx.createLinearGradient(0, 0, 512, 512);
+      bgGrad.addColorStop(0, '#E0F2FE');
+      bgGrad.addColorStop(1, '#F0F9FF');
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, 512, 512);
+
+      const pad = 32;
+      const w = 512 - pad * 2;
+      const r = 96;
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(pad + r, pad);
+      ctx.arcTo(pad + w, pad, pad + w, pad + w, r);
+      ctx.arcTo(pad + w, pad + w, pad, pad + w, r);
+      ctx.arcTo(pad, pad + w, pad, pad, r);
+      ctx.arcTo(pad, pad, pad + w, pad, r);
+      ctx.closePath();
+
+      ctx.shadowColor = 'rgba(14, 165, 233, 0.25)';
+      ctx.shadowBlur = 30;
+      ctx.shadowOffsetY = 15;
+
+      const glassGrad = ctx.createLinearGradient(pad, pad, pad + w, pad + w);
+      glassGrad.addColorStop(0, 'rgba(255, 255, 255, 0.95)');
+      glassGrad.addColorStop(0.5, 'rgba(224, 242, 254, 0.85)');
+      glassGrad.addColorStop(1, 'rgba(252, 231, 243, 0.9)');
+      ctx.fillStyle = glassGrad;
+      ctx.fill();
+      ctx.restore();
+
+      ctx.save();
+      ctx.font = '900 210px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+
+      const textGrad = ctx.createLinearGradient(150, 150, 360, 360);
+      textGrad.addColorStop(0, '#38BDF8');
+      textGrad.addColorStop(1, '#F472B6');
+      ctx.fillStyle = textGrad;
+      ctx.fillText('Hc', 256, 266);
+      ctx.restore();
+
+      const dataUrl = canvas.toDataURL('image/png');
+      document.getElementById('appleTouchIcon').href = dataUrl;
+      document.getElementById('favicon').href = dataUrl;
+    } catch(e) { console.log(e); }
+  </script>
+
+  <!-- FIREBASE & MAIN APP LOGIC -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
@@ -605,6 +546,7 @@
 
     let currentUserId = null;
     let partnerId = localStorage.getItem('myhealth_partnerId') || null;
+
     let selectedDate = new Date().toISOString().split('T')[0];
 
     let mySettings = JSON.parse(localStorage.getItem('myhealth_settings')) || { goalCal: 2000, targetWeight: 53.0, prevSmokeAvg: 15 };
@@ -671,121 +613,120 @@
 
     function initDateLog(dateKey, logsObj) {
       if (!logsObj[dateKey]) {
-        logsObj[dateKey] = { meals: [], weight: null, fat: null, sleep: null, smoked: 0 };
+        logsObj[dateKey] = { meals: [], weight: null, sleep: null, smoked: 0 };
       }
     }
 
-    function setCircleMeter(circleId, pct) {
-      const circle = document.getElementById(circleId);
-      if (!circle) return;
-      const validPct = Math.min(Math.max(pct, 0), 100);
-      circle.setAttribute('stroke-dasharray', `${validPct}, 100`);
+    function escapeHtml(str) {
+      return str.replace(/[&<>"']/g, function(m) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
+      });
+    }
+
+    function updateRing(ringId, percent) {
+      const ring = document.getElementById(ringId);
+      if (!ring) return;
+      const circumference = 251.2;
+      const offset = circumference - (Math.min(Math.max(percent, 0), 100) / 100) * circumference;
+      ring.style.strokeDashoffset = offset;
     }
 
     window.renderAll = function() {
       initDateLog(selectedDate, myLogs);
       initDateLog(selectedDate, partnerLogs);
 
-      const logMe = myLogs[selectedDate] || {};
-      const logPartner = partnerLogs[selectedDate] || {};
+      const myLog = myLogs[selectedDate];
+      const partnerLog = partnerLogs[selectedDate] || { meals: [], weight: null, sleep: null, smoked: 0 };
 
-      // 1. カロリー計算 & ドーナツメーター（水色〜ピンクグラデーション）
-      const calMe = (logMe.meals || []).reduce((sum, item) => sum + item.cal, 0);
-      const calPartner = (logPartner.meals || []).reduce((sum, item) => sum + item.cal, 0);
-      const goalCalMe = mySettings.goalCal || 2000;
-      const goalCalPartner = partnerSettings.goalCal || 2000;
+      // 1. 食事リスト & カロリー計算
+      const mealTypes = ['breakfast', 'lunch', 'dinner', 'snack'];
+      let myTotalCal = 0;
+      mealTypes.forEach(type => {
+        const listEl = document.getElementById(`${type}List`);
+        const totalEl = document.getElementById(`${type}Total`);
+        if (!listEl || !totalEl) return;
 
-      document.getElementById('valCalMe').textContent = calMe.toLocaleString();
-      document.getElementById('targetCalMe').textContent = goalCalMe.toLocaleString();
-      const diffCalMeVal = goalCalMe - calMe;
-      document.getElementById('diffCalMe').textContent = diffCalMeVal >= 0 ? `残り ${diffCalMeVal} kcal` : `オーバー ${Math.abs(diffCalMeVal)} kcal`;
-      setCircleMeter('circleCalMe', (calMe / goalCalMe) * 100);
+        const filtered = (myLog.meals || []).filter(m => m.type === type);
+        const subTotal = filtered.reduce((sum, item) => sum + item.cal, 0);
+        myTotalCal += subTotal;
+        totalEl.textContent = `${subTotal} kcal`;
 
-      document.getElementById('valCalPartner').textContent = calPartner.toLocaleString();
-      document.getElementById('targetCalPartner').textContent = goalCalPartner.toLocaleString();
-      const diffCalPartnerVal = goalCalPartner - calPartner;
-      document.getElementById('diffCalPartner').textContent = diffCalPartnerVal >= 0 ? `残り ${diffCalPartnerVal} kcal` : `オーバー ${Math.abs(diffCalPartnerVal)} kcal`;
-      setCircleMeter('circleCalPartner', (calPartner / goalCalPartner) * 100);
-
-      // 2. 喫煙・自動計算節約システム
-      const baseMe = mySettings.prevSmokeAvg || 15;
-      const basePartner = partnerSettings.prevSmokeAvg || 15;
-      
-      const smokeMe = logMe.smoked || 0;
-      const smokePartner = logPartner.smoked || 0;
-
-      // 自動計算: 1ヶ月(30日)の購入箱数と金額
-      const monthPacksMe = Math.ceil((baseMe * 30) / 20);
-      const monthCostMe = monthPacksMe * 640;
-      const maxDailySavingsMe = Math.round((baseMe / 20) * 640);
-      const currentSaveMe = Math.max(0, maxDailySavingsMe - Math.round(smokeMe * 32));
-
-      document.getElementById('valSmokeMe').textContent = `${smokeMe}本`;
-      document.getElementById('baseSmokeMe').textContent = baseMe;
-      document.getElementById('statTodaySmokeMe').textContent = `${smokeMe}本`;
-      document.getElementById('statMonthCostMe').textContent = `¥${monthCostMe.toLocaleString()}`;
-      document.getElementById('statSaveMe').textContent = `¥${currentSaveMe.toLocaleString()}`;
-      document.getElementById('tabSmokingCount').textContent = `${smokeMe} 本`;
-      
-      // 節約達成メーター: デフォルト(0本)=100%、吸うと削減
-      const savePctMe = maxDailySavingsMe > 0 ? (currentSaveMe / maxDailySavingsMe) * 100 : 0;
-      setCircleMeter('circleSmokeMe', savePctMe);
-
-      // パートナーの節約計算
-      const monthPacksPartner = Math.ceil((basePartner * 30) / 20);
-      const monthCostPartner = monthPacksPartner * 640;
-      const maxDailySavingsPartner = Math.round((basePartner / 20) * 640);
-      const currentSavePartner = Math.max(0, maxDailySavingsPartner - Math.round(smokePartner * 32));
-
-      document.getElementById('valSmokePartner').textContent = `${smokePartner}本`;
-      document.getElementById('baseSmokePartner').textContent = basePartner;
-      document.getElementById('statTodaySmokePartner').textContent = `${smokePartner}本`;
-      document.getElementById('statMonthCostPartner').textContent = `¥${monthCostPartner.toLocaleString()}`;
-      document.getElementById('statSavePartner').textContent = `¥${currentSavePartner.toLocaleString()}`;
-      
-      const savePctPartner = maxDailySavingsPartner > 0 ? (currentSavePartner / maxDailySavingsPartner) * 100 : 0;
-      setCircleMeter('circleSmokePartner', savePctPartner);
-
-      // 3. 体重
-      const wMe = logMe.weight;
-      const targetWMe = mySettings.targetWeight || 53.0;
-      document.getElementById('weightValMe').innerHTML = wMe !== null ? `${wMe} <span class="text-xs font-normal">kg</span>` : `- <span class="text-xs font-normal">kg</span>`;
-      document.getElementById('weightTargetMe').textContent = targetWMe;
-      document.getElementById('weightDiffMe').textContent = wMe !== null ? `あと ${(wMe - targetWMe).toFixed(1)}kg` : `あと - kg`;
-
-      const wPartner = logPartner.weight;
-      const targetWPartner = partnerSettings.targetWeight || 53.0;
-      document.getElementById('weightValPartner').innerHTML = wPartner !== null ? `${wPartner} <span class="text-xs font-normal">kg</span>` : `- <span class="text-xs font-normal">kg</span>`;
-      document.getElementById('weightTargetPartner').textContent = targetWPartner;
-      document.getElementById('weightDiffPartner').textContent = wPartner !== null ? `あと ${(wPartner - targetWPartner).toFixed(1)}kg` : `あと - kg`;
-
-      // 4. 睡眠
-      const sMe = logMe.sleep;
-      document.getElementById('sleepValMe').innerHTML = sMe !== null ? `${sMe} <span class="text-xs font-normal">時間</span>` : `- <span class="text-xs font-normal">時間</span>`;
-      const sPartner = logPartner.sleep;
-      document.getElementById('sleepValPartner').innerHTML = sPartner !== null ? `${sPartner} <span class="text-xs font-normal">時間</span>` : `- <span class="text-xs font-normal">時間</span>`;
-
-      // 食事詳細リスト
-      const mealListEl = document.getElementById('mealDetailList');
-      if (mealListEl) {
-        const meals = logMe.meals || [];
-        if (meals.length === 0) {
-          mealListEl.innerHTML = `<p class="text-xs text-slate-400 italic">本日の食事記録はありません</p>`;
+        if (filtered.length === 0) {
+          listEl.innerHTML = `<p class="text-slate-300 text-xs italic py-0.5">記録なし</p>`;
         } else {
-          mealListEl.innerHTML = meals.map(m => `
-            <div class="glass-card-inner p-2.5 rounded-xl flex justify-between items-center text-xs">
-              <div>
-                <span class="font-bold text-slate-700">${m.name}</span>
-                <span class="text-[10px] text-slate-400 ml-2">(${m.type})</span>
-              </div>
+          listEl.innerHTML = filtered.map(item => `
+            <div class="flex justify-between items-center py-1 border-b border-slate-50 last:border-none">
+              <span class="text-slate-700 font-medium text-xs">${escapeHtml(item.name)}</span>
               <div class="flex items-center gap-2">
-                <span class="font-black text-slate-800">${m.cal} kcal</span>
-                <button onclick="window.deleteMeal(${m.id})" class="text-slate-300 hover:text-rose-500"><i class="fa-solid fa-trash-can"></i></button>
+                <span class="font-bold text-slate-800 text-xs">${item.cal} <span class="text-[10px] text-slate-400 font-normal">kcal</span></span>
+                <button onclick="window.deleteMeal(${item.id})" class="text-slate-300 hover:text-rose-500 text-xs"><i class="fa-solid fa-trash-can"></i></button>
               </div>
             </div>
           `).join('');
         }
-      }
+      });
+
+      const partnerTotalCal = (partnerLog.meals || []).reduce((sum, item) => sum + item.cal, 0);
+
+      // 自分 カロリー表現
+      document.getElementById('meDashCal').textContent = myTotalCal.toLocaleString();
+      document.getElementById('meGoalCal').textContent = `/ ${(mySettings.goalCal || 2000).toLocaleString()}`;
+      const myRemCal = mySettings.goalCal - myTotalCal;
+      document.getElementById('meCalDiffLabel').textContent = myRemCal >= 0 ? `残り ${myRemCal.toLocaleString()} kcal` : `オーバー ${Math.abs(myRemCal).toLocaleString()} kcal`;
+      updateRing('meCalRing', (myTotalCal / (mySettings.goalCal || 2000)) * 100);
+
+      // パートナー カロリー表現
+      document.getElementById('partnerDashCal').textContent = partnerTotalCal.toLocaleString();
+      document.getElementById('partnerGoalCal').textContent = `/ ${(partnerSettings.goalCal || 2000).toLocaleString()}`;
+      const partnerRemCal = (partnerSettings.goalCal || 2000) - partnerTotalCal;
+      document.getElementById('partnerCalDiffLabel').textContent = partnerRemCal >= 0 ? `残り ${partnerRemCal.toLocaleString()} kcal` : `オーバー ${Math.abs(partnerRemCal).toLocaleString()} kcal`;
+      updateRing('partnerCalRing', (partnerTotalCal / (partnerSettings.goalCal || 2000)) * 100);
+
+      // 2. 喫煙・節約計算
+      const renderSmoke = (prefix, logObj, settingsObj) => {
+        const avg = settingsObj.prevSmokeAvg || 15;
+        const todaySmoked = logObj.smoked || 0;
+        
+        const monthlyPacks = Math.ceil((avg * 30) / 20);
+        const monthlyCost = monthlyPacks * 640;
+        
+        const todaySavedCigs = Math.max(0, avg - todaySmoked);
+        const todaySavingsYen = Math.floor((todaySavedCigs / 20) * 640);
+        const savingsPercent = (todaySavedCigs / avg) * 100;
+
+        document.getElementById(`${prefix}AvgSmoke`).textContent = avg;
+        document.getElementById(`${prefix}TodaySmoke`).textContent = todaySmoked;
+        document.getElementById(`${prefix}PacksMonth`).textContent = monthlyPacks;
+        document.getElementById(`${prefix}CostMonth`).textContent = `¥${monthlyCost.toLocaleString()}`;
+        document.getElementById(`${prefix}TodaySavings`).textContent = `¥${todaySavingsYen.toLocaleString()}`;
+        
+        updateRing(`${prefix}SmokeRing`, savingsPercent);
+      };
+
+      renderSmoke('me', myLog, mySettings);
+      renderSmoke('partner', partnerLog, partnerSettings);
+      document.getElementById('todaySmokeCount').textContent = myLog.smoked || 0;
+
+      // 3. 体重表現
+      const renderWeight = (prefix, weightVal, targetVal) => {
+        document.getElementById(`${prefix}DashWeight`).textContent = weightVal !== null ? weightVal : '-';
+        document.getElementById(`${prefix}TargetWeight`).textContent = targetVal || 53.0;
+        if (weightVal !== null) {
+          const diff = (weightVal - (targetVal || 53.0)).toFixed(1);
+          document.getElementById(`${prefix}WeightDiff`).textContent = diff > 0 ? `+${diff}` : `${diff}`;
+        } else {
+          document.getElementById(`${prefix}WeightDiff`).textContent = '-';
+        }
+      };
+
+      renderWeight('me', myLog.weight, mySettings.targetWeight);
+      renderWeight('partner', partnerLog.weight, partnerSettings.targetWeight);
+      if (myLog.weight !== null) document.getElementById('inputWeight').value = myLog.weight;
+
+      // 4. 睡眠表現
+      document.getElementById('meDashSleep').textContent = myLog.sleep !== null ? myLog.sleep : '-';
+      document.getElementById('partnerDashSleep').textContent = partnerLog.sleep !== null ? partnerLog.sleep : '-';
+      if (myLog.sleep !== null) document.getElementById('inputSleep').value = myLog.sleep;
     };
 
     function saveStateAndSync() {
@@ -818,25 +759,19 @@
     window.handleBodySubmit = function(e) {
       e.preventDefault();
       const w = parseFloat(document.getElementById('inputWeight').value);
-      const f = parseFloat(document.getElementById('inputFat').value);
-
       initDateLog(selectedDate, myLogs);
       if (!isNaN(w)) myLogs[selectedDate].weight = w;
-      if (!isNaN(f)) myLogs[selectedDate].fat = f;
-
       saveStateAndSync();
-      alert('身体データを更新しました！');
+      alert('体重データを保存しました！');
     };
 
     window.handleSleepSubmit = function(e) {
       e.preventDefault();
       const s = parseFloat(document.getElementById('inputSleep').value);
-
       initDateLog(selectedDate, myLogs);
       if (!isNaN(s)) myLogs[selectedDate].sleep = s;
-
       saveStateAndSync();
-      alert('睡眠データを更新しました！');
+      alert('睡眠データを記録しました！');
     };
 
     window.changeSmokeCount = function(delta) {
@@ -846,12 +781,12 @@
       saveStateAndSync();
     };
 
-    window.saveSmokeConfig = function() {
-      const num = parseInt(document.getElementById('inputPrevSmokeAvg').value, 10);
-      if (!isNaN(num) && num >= 0) {
-        mySettings.prevSmokeAvg = num;
+    window.saveSmokeSetting = function() {
+      const val = parseInt(document.getElementById('prevSmokeAvgInput').value, 10);
+      if (!isNaN(val) && val >= 0) {
+        mySettings.prevSmokeAvg = val;
         saveStateAndSync();
-        window.closeSmokeConfigModal();
+        window.closeSmokeSettingModal();
       }
     };
 
@@ -906,24 +841,21 @@
     window.closeGoalCalModal = function() { document.getElementById('goalCalModal').classList.add('hidden'); };
     window.openWeightGoalModal = function() { document.getElementById('targetWeightModal').classList.remove('hidden'); };
     window.closeWeightGoalModal = function() { document.getElementById('targetWeightModal').classList.add('hidden'); };
-    window.openSmokeConfigModal = function() { 
-      document.getElementById('inputPrevSmokeAvg').value = mySettings.prevSmokeAvg || 15;
-      document.getElementById('smokeConfigModal').classList.remove('hidden'); 
-    };
-    window.closeSmokeConfigModal = function() { document.getElementById('smokeConfigModal').classList.add('hidden'); };
+    window.openSmokeSettingModal = function() { document.getElementById('smokeSettingModal').classList.remove('hidden'); };
+    window.closeSmokeSettingModal = function() { document.getElementById('smokeSettingModal').classList.add('hidden'); };
     window.togglePairModal = function() { document.getElementById('pairModal').classList.toggle('hidden'); };
 
     window.switchTab = function(tabId) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
       document.getElementById(`tab-${tabId}`).classList.remove('hidden');
       document.querySelectorAll('.nav-btn').forEach(btn => {
-        btn.classList.remove('text-sky-600');
+        btn.classList.remove('text-sky-500');
         btn.classList.add('text-slate-400');
       });
       const activeNav = document.getElementById(`nav-${tabId}`);
       if (activeNav) {
         activeNav.classList.remove('text-slate-400');
-        activeNav.classList.add('text-sky-600');
+        activeNav.classList.add('text-sky-500');
       }
     };
 
