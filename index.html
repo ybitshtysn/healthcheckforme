@@ -31,43 +31,26 @@
     <header class="bg-gradient-to-r from-sky-400 to-sky-500 text-white p-4 pt-6 sticky top-0 z-20 shadow-md">
       <div class="flex justify-between items-center">
         <div>
-          <span class="text-xs font-semibold tracking-wider text-sky-100 uppercase block">2026/11/06 Fri.</span>
-          <h1 class="text-xl font-black tracking-tight flex items-center gap-2">
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-semibold tracking-wider text-sky-100 uppercase" id="headerDateDisplay">2026/11/06 Fri.</span>
+            <input type="date" id="datePicker" onchange="changeDate(this.value)" class="bg-sky-600/40 text-white text-[10px] px-1.5 py-0.5 rounded border border-white/20 focus:outline-none">
+          </div>
+          <h1 class="text-xl font-black tracking-tight flex items-center gap-2 mt-0.5">
             <i class="fa-solid font-bold fa-heart-pulse text-pink-300"></i> My Health Log
           </h1>
         </div>
-        <button onclick="togglePairModal()" class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition text-white border border-white/30 relative">
-          <i class="fa-solid fa-users"></i>
-          <span id="pairStatusDot" class="absolute top-0 right-0 w-3 h-3 bg-rose-400 border-2 border-white rounded-full"></span>
-        </button>
-      </div>
-
-      <!-- User Switcher Tab -->
-      <div class="flex bg-sky-600/30 p-1 rounded-xl mt-3 text-xs font-bold">
-        <button id="viewMeBtn" onclick="switchViewUser('me')" class="flex-1 py-1.5 rounded-lg bg-white text-sky-600 shadow">
-          自分
-        </button>
-        <button id="viewPartnerBtn" onclick="switchViewUser('partner')" class="flex-1 py-1.5 rounded-lg text-white/80 hover:text-white">
-          パートナー
-        </button>
       </div>
     </header>
 
     <!-- Main Content Area -->
     <main class="flex-1 p-4 space-y-4 overflow-y-auto">
 
-      <!-- DASHBOARD TAB (全項目サマリー) -->
+      <!-- DASHBOARD TAB -->
       <section id="tab-dashboard" class="tab-content space-y-4">
         
-        <!-- Partner View Banner -->
-        <div id="partnerBanner" class="hidden bg-pink-50 border border-pink-200 text-pink-700 p-2.5 rounded-xl text-xs flex justify-between items-center">
-          <span><i class="fa-solid fa-eye mr-1"></i> パートナーのデータ表示中</span>
-          <span class="font-bold text-[10px] bg-pink-200 px-2 py-0.5 rounded-full">閲覧モード</span>
-        </div>
-
         <div class="flex justify-between items-center">
           <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider">本日の全項目サマリー</h2>
-          <span class="text-[10px] font-bold text-sky-600 bg-sky-100 px-2.5 py-0.5 rounded-full">リアルタイム集計</span>
+          <span class="text-[10px] font-bold text-emerald-600 bg-emerald-100 px-2.5 py-0.5 rounded-full"><i class="fa-solid fa-floppy-disk mr-1"></i>保存済み</span>
         </div>
 
         <!-- 1. 食事サマリー -->
@@ -82,20 +65,20 @@
           </div>
           <div class="flex items-baseline justify-between mb-2">
             <div>
-              <span class="text-2xl font-black text-slate-800" id="dashIntakeCal">1,450</span>
+              <span class="text-2xl font-black text-slate-800" id="dashIntakeCal">0</span>
               <span class="text-xs font-semibold text-slate-500"> / <span id="dashGoalCal">2,000</span> kcal</span>
             </div>
             <div class="text-right">
               <span class="text-[10px] text-slate-400 block" id="dashCalDiffLabel">残り</span>
-              <span class="text-base font-extrabold text-sky-600" id="dashRemainingCal">550 kcal</span>
+              <span class="text-base font-extrabold text-sky-600" id="dashRemainingCal">2,000 kcal</span>
             </div>
           </div>
           <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
-            <div id="dashCalProgress" class="bg-gradient-to-r from-sky-400 to-pink-400 h-2.5 rounded-full transition-all duration-300" style="width: 72.5%"></div>
+            <div id="dashCalProgress" class="bg-gradient-to-r from-sky-400 to-pink-400 h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
           </div>
         </div>
 
-        <!-- 2. 体重・目標体重サマリー -->
+        <!-- 2. 体重サマリー -->
         <div class="glass-card rounded-2xl p-4 shadow-sm border-l-4 border-l-indigo-400 space-y-2">
           <div class="flex justify-between items-center">
             <span class="text-xs font-bold text-slate-500 flex items-center gap-1.5">
@@ -108,7 +91,7 @@
           <div class="grid grid-cols-3 gap-2 text-center bg-slate-50 p-2.5 rounded-xl border border-slate-100">
             <div>
               <span class="text-[10px] text-slate-400 block font-semibold">現在</span>
-              <span class="text-lg font-black text-slate-800" id="dashWeight">58.4</span>
+              <span class="text-lg font-black text-slate-800" id="dashWeight">-</span>
               <span class="text-[10px] text-slate-500">kg</span>
             </div>
             <div class="border-x border-slate-200">
@@ -118,15 +101,14 @@
             </div>
             <div>
               <span class="text-[10px] text-slate-400 block font-semibold">あと</span>
-              <span class="text-lg font-black text-pink-500" id="dashWeightDiff">-5.4</span>
+              <span class="text-lg font-black text-pink-500" id="dashWeightDiff">-</span>
               <span class="text-[10px] text-slate-500">kg</span>
             </div>
           </div>
         </div>
 
-        <!-- 3. その他（体脂肪率・睡眠・喫煙/節約）グリッド -->
+        <!-- 3. 体脂肪率 & 睡眠 -->
         <div class="grid grid-cols-2 gap-3">
-          <!-- 体脂肪率 -->
           <div class="glass-card p-3.5 rounded-2xl shadow-sm">
             <div class="flex justify-between items-start mb-1">
               <span class="text-xs font-bold text-slate-500">体脂肪率</span>
@@ -135,12 +117,11 @@
               </div>
             </div>
             <div class="flex items-baseline gap-1">
-              <span class="text-xl font-black text-slate-800" id="dashFat">21.2</span>
+              <span class="text-xl font-black text-slate-800" id="dashFat">-</span>
               <span class="text-xs text-slate-500">%</span>
             </div>
           </div>
 
-          <!-- 睡眠時間 -->
           <div class="glass-card p-3.5 rounded-2xl shadow-sm">
             <div class="flex justify-between items-start mb-1">
               <span class="text-xs font-bold text-slate-500">睡眠時間</span>
@@ -149,7 +130,7 @@
               </div>
             </div>
             <div class="flex items-baseline gap-1">
-              <span class="text-xl font-black text-slate-800" id="dashSleep">7.5</span>
+              <span class="text-xl font-black text-slate-800" id="dashSleep">-</span>
               <span class="text-xs text-slate-500">時間</span>
             </div>
           </div>
@@ -160,14 +141,14 @@
           <div>
             <span class="text-xs font-bold text-slate-500 block mb-0.5">本日の喫煙本数</span>
             <div class="flex items-baseline gap-1">
-              <span class="text-2xl font-black text-slate-800" id="dashTodaySmoke">3</span>
+              <span class="text-2xl font-black text-slate-800" id="dashTodaySmoke">0</span>
               <span class="text-xs text-slate-500">本</span>
             </div>
           </div>
           <div class="text-right border-l border-slate-200 pl-4">
             <span class="text-xs font-bold text-slate-500 block mb-0.5">累計節約額 (20本=¥640)</span>
             <span class="text-xl font-black text-pink-600" id="dashSavings">¥0</span>
-            <span class="text-[10px] text-slate-400 block">削減: <span id="dashReducedCigs">0</span>本</span>
+            <span class="text-[10px] text-slate-400 block">通算削減: <span id="dashReducedCigs">0</span>本</span>
           </div>
         </div>
       </section>
@@ -193,23 +174,57 @@
             </div>
             <div class="border-x border-slate-200">
               <span class="text-[10px] font-semibold text-slate-400 block">現在の摂取</span>
-              <span class="text-base font-extrabold text-sky-600" id="mealCurrentVal">1,450</span>
+              <span class="text-base font-extrabold text-sky-600" id="mealCurrentVal">0</span>
               <span class="text-[10px] text-slate-400">kcal</span>
             </div>
             <div>
               <span class="text-[10px] font-semibold text-slate-400 block" id="mealDiffLabel">差分</span>
-              <span class="text-base font-extrabold text-pink-500" id="mealDiffVal">550</span>
+              <span class="text-base font-extrabold text-pink-500" id="mealDiffVal">2,000</span>
               <span class="text-[10px] text-slate-400">kcal</span>
             </div>
           </div>
         </div>
 
-        <button id="addMealBtn" onclick="openMealModal()" class="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-2">
+        <button onclick="openMealModal()" class="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-2">
           <i class="fa-solid fa-plus"></i> 食事を記録する
         </button>
 
-        <div class="space-y-3" id="mealListsContainer">
-          <!-- Meals rendered by JS -->
+        <div class="space-y-3">
+          <!-- 朝食 -->
+          <div class="glass-card p-3.5 rounded-xl shadow-sm">
+            <div class="flex justify-between items-center mb-2 pb-1 border-b border-slate-100">
+              <span class="font-bold text-sm text-slate-700 flex items-center gap-1.5"><i class="fa-solid fa-sun text-amber-400"></i> 朝食</span>
+              <span class="text-xs font-bold text-sky-600" id="breakfastTotal">0 kcal</span>
+            </div>
+            <div id="breakfastList" class="space-y-2 text-sm"></div>
+          </div>
+
+          <!-- 昼食 -->
+          <div class="glass-card p-3.5 rounded-xl shadow-sm">
+            <div class="flex justify-between items-center mb-2 pb-1 border-b border-slate-100">
+              <span class="font-bold text-sm text-slate-700 flex items-center gap-1.5"><i class="fa-solid fa-cloud-sun text-sky-400"></i> 昼食</span>
+              <span class="text-xs font-bold text-sky-600" id="lunchTotal">0 kcal</span>
+            </div>
+            <div id="lunchList" class="space-y-2 text-sm"></div>
+          </div>
+
+          <!-- 夕食 -->
+          <div class="glass-card p-3.5 rounded-xl shadow-sm">
+            <div class="flex justify-between items-center mb-2 pb-1 border-b border-slate-100">
+              <span class="font-bold text-sm text-slate-700 flex items-center gap-1.5"><i class="fa-solid fa-moon text-indigo-400"></i> 夕食</span>
+              <span class="text-xs font-bold text-sky-600" id="dinnerTotal">0 kcal</span>
+            </div>
+            <div id="dinnerList" class="space-y-2 text-sm"></div>
+          </div>
+
+          <!-- 間食 -->
+          <div class="glass-card p-3.5 rounded-xl shadow-sm">
+            <div class="flex justify-between items-center mb-2 pb-1 border-b border-slate-100">
+              <span class="font-bold text-sm text-slate-700 flex items-center gap-1.5"><i class="fa-solid fa-cookie-bite text-pink-400"></i> 間食・その他</span>
+              <span class="text-xs font-bold text-sky-600" id="snackTotal">0 kcal</span>
+            </div>
+            <div id="snackList" class="space-y-2 text-sm"></div>
+          </div>
         </div>
       </section>
 
@@ -228,11 +243,11 @@
             <div class="grid grid-cols-2 gap-3">
               <div>
                 <label class="text-xs font-semibold text-slate-500 block mb-1">現在の体重 (kg)</label>
-                <input type="number" step="0.1" id="inputWeight" value="58.4" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-sm font-bold text-slate-800">
+                <input type="number" step="0.1" id="inputWeight" placeholder="58.4" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-sm font-bold text-slate-800">
               </div>
               <div>
                 <label class="text-xs font-semibold text-slate-500 block mb-1">体脂肪率 (%)</label>
-                <input type="number" step="0.1" id="inputFat" value="21.2" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-sm font-bold text-slate-800">
+                <input type="number" step="0.1" id="inputFat" placeholder="21.2" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-sm font-bold text-slate-800">
               </div>
             </div>
             <button type="submit" class="w-full bg-sky-500 text-white font-bold py-2.5 rounded-xl hover:bg-sky-600 transition text-sm">
@@ -241,7 +256,6 @@
           </form>
         </div>
 
-        <!-- Sleep Form -->
         <div class="glass-card p-4 rounded-2xl shadow-sm space-y-3">
           <h3 class="text-sm font-bold text-slate-700 flex items-center gap-2">
             <i class="fa-solid fa-moon text-indigo-500"></i> 睡眠記録
@@ -249,7 +263,7 @@
           <form onsubmit="handleSleepSubmit(event)" class="space-y-3">
             <div>
               <label class="text-xs font-semibold text-slate-500 block mb-1">睡眠時間 (時間)</label>
-              <input type="number" step="0.5" id="inputSleep" value="7.5" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-sm font-bold text-slate-800">
+              <input type="number" step="0.5" id="inputSleep" placeholder="7.5" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-sm font-bold text-slate-800">
             </div>
             <button type="submit" class="w-full bg-indigo-500 text-white font-bold py-2.5 rounded-xl hover:bg-indigo-600 transition text-sm">
               睡眠データを記録
@@ -263,15 +277,15 @@
         <div class="bg-gradient-to-br from-pink-500 to-rose-400 text-white p-5 rounded-2xl shadow-md text-center">
           <span class="text-xs font-bold uppercase tracking-widest text-pink-100 block mb-1">節約成果 (20本削減 = ¥640)</span>
           <div class="text-4xl font-black mb-1" id="smokeTotalSavings">¥0</div>
-          <p class="text-xs text-pink-100">累計削減本数: <span id="smokeTotalReduced">0</span> 本</p>
+          <p class="text-xs text-pink-100">通算削減本数: <span id="smokeTotalReduced">0</span> 本</p>
         </div>
 
         <div class="glass-card p-4 rounded-2xl shadow-sm text-center">
           <span class="text-xs font-bold text-slate-400 block mb-1">本日の喫煙数</span>
-          <div class="text-4xl font-black text-slate-800 mb-3" id="todaySmokeCount">3</div>
-          <div id="smokeActionBtns" class="flex justify-center gap-3">
-            <button onclick="changeSmokeCount(-1)" class="w-12 h-12 rounded-xl bg-slate-100 font-black text-xl">-</button>
-            <button onclick="changeSmokeCount(1)" class="flex-1 bg-pink-500 text-white font-bold py-3 rounded-xl shadow">+ 1本記録</button>
+          <div class="text-4xl font-black text-slate-800 mb-3" id="todaySmokeCount">0</div>
+          <div class="flex justify-center gap-3">
+            <button onclick="changeSmokeCount(-1)" class="w-12 h-12 rounded-xl bg-slate-100 font-black text-xl text-slate-700 active:bg-slate-200">-</button>
+            <button onclick="changeSmokeCount(1)" class="flex-1 bg-pink-500 text-white font-bold py-3 rounded-xl shadow active:bg-pink-600">+ 1本記録</button>
           </div>
         </div>
 
@@ -279,7 +293,7 @@
           <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider">節煙基準設定</h3>
           <div>
             <label class="text-[11px] font-semibold text-slate-500 block mb-1">以前の1日平均本数</label>
-            <input type="number" id="prevSmokeAvg" value="15" onchange="updateSmokingCalculations()" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-sm font-bold text-slate-800">
+            <input type="number" id="prevSmokeAvg" value="15" onchange="updatePrevSmokeAvg(this.value)" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-sm font-bold text-slate-800">
           </div>
         </div>
       </section>
@@ -306,7 +320,40 @@
       </button>
     </nav>
 
-    <!-- EDIT TARGET CALORIE MODAL -->
+    <!-- ADD MEAL MODAL -->
+    <div id="mealModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-end justify-center hidden">
+      <div class="bg-white w-full max-w-md rounded-t-3xl p-5 space-y-4 shadow-2xl">
+        <div class="flex justify-between items-center border-b border-slate-100 pb-2">
+          <h3 class="text-base font-bold text-slate-800">食事を記録する</h3>
+          <button onclick="closeMealModal()" class="text-slate-400 text-lg"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <form onsubmit="handleAddMeal(event)" class="space-y-3">
+          <div>
+            <label class="text-xs font-semibold text-slate-500 block mb-1">区分</label>
+            <select id="mealTypeSelect" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-sm font-bold text-slate-800">
+              <option value="breakfast">朝食</option>
+              <option value="lunch" selected>昼食</option>
+              <option value="dinner">夕食</option>
+              <option value="snack">間食・その他</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-500 block mb-1">メニュー名</label>
+            <input type="text" id="mealNameInput" placeholder="例：サラダ、和風パスタ" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-sm text-slate-800">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-500 block mb-1">カロリー (kcal)</label>
+            <input type="number" id="mealCalInput" placeholder="例：450" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-sm font-bold text-slate-800">
+          </div>
+          <div class="pt-2 flex gap-2">
+            <button type="button" onclick="closeMealModal()" class="flex-1 bg-slate-100 text-slate-600 font-bold py-2.5 rounded-xl text-sm">キャンセル</button>
+            <button type="submit" class="flex-1 bg-sky-500 text-white font-bold py-2.5 rounded-xl shadow-md text-sm">追加保存</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- TARGET CALORIE MODAL -->
     <div id="goalCalModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
       <div class="bg-white w-full max-w-xs rounded-2xl p-5 space-y-4 shadow-2xl">
         <h3 class="text-base font-bold text-slate-800">目標カロリー設定</h3>
@@ -321,7 +368,7 @@
       </div>
     </div>
 
-    <!-- EDIT TARGET WEIGHT MODAL -->
+    <!-- TARGET WEIGHT MODAL -->
     <div id="targetWeightModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
       <div class="bg-white w-full max-w-xs rounded-2xl p-5 space-y-4 shadow-2xl">
         <h3 class="text-base font-bold text-slate-800">目標体重設定</h3>
@@ -336,237 +383,256 @@
       </div>
     </div>
 
-    <!-- PAIRING MODAL -->
-    <div id="pairModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-      <div class="bg-white w-full max-w-xs rounded-2xl p-5 space-y-4 shadow-2xl">
-        <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
-          <i class="fa-solid fa-users text-sky-500"></i> パートナー共有設定
-        </h3>
-        <div>
-          <label class="text-xs text-slate-500 block mb-1">あなたのコード</label>
-          <div class="bg-slate-100 p-2.5 rounded-lg text-center font-mono font-bold text-slate-700" id="myPairCode">生成中...</div>
-        </div>
-        <div>
-          <label class="text-xs text-slate-500 block mb-1">相手のコードを入力</label>
-          <input type="text" id="partnerCodeInput" placeholder="相手のコード" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-center font-mono font-bold">
-        </div>
-        <div class="flex gap-2">
-          <button onclick="togglePairModal()" class="flex-1 bg-slate-100 text-slate-600 font-bold py-2 rounded-lg text-xs">閉じる</button>
-          <button onclick="savePartnerCode()" class="flex-1 bg-sky-500 text-white font-bold py-2 rounded-lg text-xs shadow">接続する</button>
-        </div>
-      </div>
-    </div>
-
   </div>
 
-  <!-- Firebase SDKs -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-    import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+  <script>
+    // 今日をデフォルトの日付とする
+    let selectedDate = new Date().toISOString().split('T')[0];
 
-    const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_PROJECT_ID.appspot.com",
-      messagingSenderId: "YOUR_SENDER_ID",
-      appId: "YOUR_APP_ID"
+    // ローカルストレージ管理構造
+    let settings = JSON.parse(localStorage.getItem('myhealth_settings')) || {
+      goalCal: 2000,
+      targetWeight: 53.0,
+      prevSmokeAvg: 15
     };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const auth = getAuth(app);
+    let logs = JSON.parse(localStorage.getItem('myhealth_logs')) || {};
 
-    let currentUserId = null;
-    let partnerId = localStorage.getItem('partnerId') || null;
-    let viewTarget = 'me';
-
-    let myData = { intakeCal: 1450, goalCal: 2000, weight: 58.4, targetWeight: 53.0, fat: 21.2, sleep: 7.5, smoked: 3, prevAvg: 15, accumReducedCigs: 0 };
-    let partnerData = { intakeCal: 0, goalCal: 2000, weight: 0, targetWeight: 0, fat: 0, sleep: 0, smoked: 0, prevAvg: 15, accumReducedCigs: 0 };
-
-    signInAnonymously(auth).catch(console.error);
-
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        currentUserId = user.uid;
-        document.getElementById('myPairCode').textContent = currentUserId.slice(0, 8);
-        
-        onSnapshot(doc(db, "health_logs", currentUserId), (docSnap) => {
-          if (docSnap.exists()) {
-            myData = { ...myData, ...docSnap.data() };
-            if (viewTarget === 'me') renderUI(myData);
-          } else {
-            saveDataToFirebase(myData);
-          }
-        });
-
-        if (partnerId) {
-          document.getElementById('pairStatusDot').className = "absolute top-0 right-0 w-3 h-3 bg-emerald-400 border-2 border-white rounded-full";
-          listenPartnerData();
-        }
-      }
+    window.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('datePicker').value = selectedDate;
+      updateHeaderDateDisplay();
+      initDateLog(selectedDate);
+      renderAll();
     });
 
-    function listenPartnerData() {
-      if (!partnerId) return;
-      onSnapshot(doc(db, "health_logs", partnerId), (docSnap) => {
-        if (docSnap.exists()) {
-          partnerData = { ...partnerData, ...docSnap.data() };
-          if (viewTarget === 'partner') renderUI(partnerData);
+    function initDateLog(dateKey) {
+      if (!logs[dateKey]) {
+        logs[dateKey] = {
+          meals: [],
+          weight: null,
+          fat: null,
+          sleep: null,
+          smoked: 0
+        };
+      }
+    }
+
+    function saveToLocalStorage() {
+      localStorage.setItem('myhealth_settings', JSON.stringify(settings));
+      localStorage.setItem('myhealth_logs', JSON.stringify(logs));
+    }
+
+    function changeDate(newDate) {
+      if (!newDate) return;
+      selectedDate = newDate;
+      updateHeaderDateDisplay();
+      initDateLog(selectedDate);
+      renderAll();
+    }
+
+    function updateHeaderDateDisplay() {
+      const d = new Date(selectedDate);
+      const days = ['Sun.', 'Mon.', 'Tue.', 'Wed.', 'Thu.', 'Fri.', 'Sat.'];
+      const formattedStr = `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')} ${days[d.getDay()]}`;
+      document.getElementById('headerDateDisplay').textContent = formattedStr;
+    }
+
+    function renderAll() {
+      const currentLog = logs[selectedDate] || { meals: [], weight: null, fat: null, sleep: null, smoked: 0 };
+
+      // 食事一覧描画 & カロリー集計
+      const mealTypes = ['breakfast', 'lunch', 'dinner', 'snack'];
+      let totalIntakeCal = 0;
+
+      mealTypes.forEach(type => {
+        const listEl = document.getElementById(`${type}List`);
+        const totalEl = document.getElementById(`${type}Total`);
+        const filtered = (currentLog.meals || []).filter(m => m.type === type);
+        const subTotal = filtered.reduce((sum, item) => sum + item.cal, 0);
+
+        totalIntakeCal += subTotal;
+        totalEl.textContent = `${subTotal} kcal`;
+
+        if (filtered.length === 0) {
+          listEl.innerHTML = `<p class="text-slate-300 text-xs italic py-0.5">記録なし</p>`;
+        } else {
+          listEl.innerHTML = filtered.map(item => `
+            <div class="flex justify-between items-center py-1 border-b border-slate-50 last:border-none">
+              <span class="text-slate-700 font-medium text-xs">${escapeHtml(item.name)}</span>
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-slate-800 text-xs">${item.cal} <span class="text-[10px] text-slate-400 font-normal">kcal</span></span>
+                <button onclick="deleteMeal(${item.id})" class="text-slate-300 hover:text-rose-500 text-xs">
+                  <i class="fa-solid fa-trash-can"></i>
+                </button>
+              </div>
+            </div>
+          `).join('');
         }
       });
-    }
 
-    async function saveDataToFirebase(data) {
-      if (!currentUserId) return;
-      await setDoc(doc(db, "health_logs", currentUserId), data, { merge: true });
-    }
+      // カロリー差分
+      const remainingCal = settings.goalCal - totalIntakeCal;
+      document.getElementById('dashIntakeCal').textContent = totalIntakeCal.toLocaleString();
+      document.getElementById('dashGoalCal').textContent = settings.goalCal.toLocaleString();
+      document.getElementById('dashRemainingCal').textContent = `${Math.abs(remainingCal).toLocaleString()} kcal`;
+      document.getElementById('dashCalDiffLabel').textContent = remainingCal >= 0 ? '残り' : 'オーバー';
+      document.getElementById('dashCalProgress').style.width = `${Math.min((totalIntakeCal / settings.goalCal) * 100, 100)}%`;
 
-    window.renderUI = function(data) {
-      // 食事サマリー
-      const intake = data.intakeCal || 0;
-      const goalCal = data.goalCal || 2000;
-      const remCal = goalCal - intake;
-      document.getElementById('dashIntakeCal').textContent = intake.toLocaleString();
-      document.getElementById('dashGoalCal').textContent = goalCal.toLocaleString();
-      document.getElementById('dashRemainingCal').textContent = `${Math.abs(remCal)} kcal`;
-      document.getElementById('dashCalDiffLabel').textContent = remCal >= 0 ? '残り' : 'オーバー';
-      document.getElementById('dashCalProgress').style.width = `${Math.min((intake / goalCal) * 100, 100)}%`;
+      document.getElementById('mealTargetVal').textContent = settings.goalCal.toLocaleString();
+      document.getElementById('mealCurrentVal').textContent = totalIntakeCal.toLocaleString();
+      document.getElementById('mealDiffVal').textContent = Math.abs(remainingCal).toLocaleString();
+      document.getElementById('mealDiffLabel').textContent = remainingCal >= 0 ? '残り' : 'オーバー';
+      document.getElementById('targetCalInput').value = settings.goalCal;
 
-      document.getElementById('mealTargetVal').textContent = goalCal.toLocaleString();
-      document.getElementById('mealCurrentVal').textContent = intake.toLocaleString();
-      document.getElementById('mealDiffVal').textContent = Math.abs(remCal).toLocaleString();
-      document.getElementById('mealDiffLabel').textContent = remCal >= 0 ? '残り' : 'オーバー';
+      // 体重・体脂肪率
+      const weight = currentLog.weight;
+      const targetWeight = settings.targetWeight || 53.0;
+      document.getElementById('dashWeight').textContent = weight !== null ? weight : '-';
+      document.getElementById('dashTargetWeight').textContent = targetWeight;
+      document.getElementById('targetWeightInput').value = targetWeight;
 
-      // 体重サマリー
-      const weight = data.weight || 0;
-      const targetWeight = data.targetWeight || 50.0;
-      const diffWeight = (weight - targetWeight).toFixed(1);
-      document.getElementById('dashWeight').textContent = weight || '-';
-      document.getElementById('dashTargetWeight').textContent = targetWeight || '-';
-      document.getElementById('dashWeightDiff').textContent = diffWeight > 0 ? `-${diffWeight}` : `+${Math.abs(diffWeight)}`;
+      if (weight !== null) {
+        const diffWeight = (weight - targetWeight).toFixed(1);
+        document.getElementById('dashWeightDiff').textContent = diffWeight > 0 ? `-${diffWeight}` : `+${Math.abs(diffWeight)}`;
+        document.getElementById('inputWeight').value = weight;
+      } else {
+        document.getElementById('dashWeightDiff').textContent = '-';
+        document.getElementById('inputWeight').value = '';
+      }
 
-      document.getElementById('inputWeight').value = weight;
-      document.getElementById('inputFat').value = data.fat || 0;
-      document.getElementById('inputSleep').value = data.sleep || 0;
+      document.getElementById('dashFat').textContent = currentLog.fat !== null ? currentLog.fat : '-';
+      document.getElementById('inputFat').value = currentLog.fat !== null ? currentLog.fat : '';
 
-      // その他
-      document.getElementById('dashFat').textContent = data.fat || '-';
-      document.getElementById('dashSleep').textContent = data.sleep || '-';
+      // 睡眠
+      document.getElementById('dashSleep').textContent = currentLog.sleep !== null ? currentLog.sleep : '-';
+      document.getElementById('inputSleep').value = currentLog.sleep !== null ? currentLog.sleep : '';
 
-      // 喫煙・節約サマリー (20本=640円計算)
-      const smoked = data.smoked || 0;
-      const prevAvg = data.prevAvg || 15;
-      const savedTodayCigs = Math.max(0, prevAvg - smoked);
-      const totalReduced = (data.accumReducedCigs || 0) + savedTodayCigs;
-      
-      // 20本減るごとに640円の節約
-      const packsSaved = Math.floor(totalReduced / 20);
+      // 喫煙・節約
+      const todaySmoked = currentLog.smoked || 0;
+      document.getElementById('dashTodaySmoke').textContent = todaySmoked;
+      document.getElementById('todaySmokeCount').textContent = todaySmoked;
+      document.getElementById('prevSmokeAvg').value = settings.prevSmokeAvg;
+
+      // 通算削減本数と節約金額（20本削減＝640円）
+      let totalReducedCigs = 0;
+      Object.keys(logs).forEach(dateKey => {
+        const log = logs[dateKey];
+        const prevAvg = settings.prevSmokeAvg || 15;
+        const reduced = Math.max(0, prevAvg - (log.smoked || 0));
+        totalReducedCigs += reduced;
+      });
+
+      const packsSaved = Math.floor(totalReducedCigs / 20);
       const totalSavingsYen = packsSaved * 640;
 
-      document.getElementById('dashTodaySmoke').textContent = smoked;
-      document.getElementById('todaySmokeCount').textContent = smoked;
       document.getElementById('dashSavings').textContent = `¥${totalSavingsYen.toLocaleString()}`;
       document.getElementById('smokeTotalSavings').textContent = `¥${totalSavingsYen.toLocaleString()}`;
-      document.getElementById('dashReducedCigs').textContent = totalReduced;
-      document.getElementById('smokeTotalReduced').textContent = totalReduced;
-    };
+      document.getElementById('dashReducedCigs').textContent = totalReducedCigs;
+      document.getElementById('smokeTotalReduced').textContent = totalReducedCigs;
+    }
 
-    window.switchViewUser = function(target) {
-      viewTarget = target;
-      const meBtn = document.getElementById('viewMeBtn');
-      const partnerBtn = document.getElementById('viewPartnerBtn');
-      const partnerBanner = document.getElementById('partnerBanner');
+    // 食事登録・削除
+    function handleAddMeal(e) {
+      e.preventDefault();
+      const type = document.getElementById('mealTypeSelect').value;
+      const name = document.getElementById('mealNameInput').value.trim();
+      const cal = parseInt(document.getElementById('mealCalInput').value, 10);
 
-      if (target === 'me') {
-        meBtn.className = "flex-1 py-1.5 rounded-lg bg-white text-sky-600 shadow font-bold";
-        partnerBtn.className = "flex-1 py-1.5 rounded-lg text-white/80 hover:text-white font-bold";
-        partnerBanner.classList.add('hidden');
-        renderUI(myData);
-      } else {
-        partnerBtn.className = "flex-1 py-1.5 rounded-lg bg-white text-pink-600 shadow font-bold";
-        meBtn.className = "flex-1 py-1.5 rounded-lg text-white/80 hover:text-white font-bold";
-        partnerBanner.classList.remove('hidden');
-        renderUI(partnerData);
+      if (name && !isNaN(cal)) {
+        logs[selectedDate].meals.push({
+          id: Date.now(),
+          type,
+          name,
+          cal
+        });
+        saveToLocalStorage();
+        renderAll();
+        closeMealModal();
+        document.getElementById('mealNameInput').value = '';
+        document.getElementById('mealCalInput').value = '';
       }
-    };
+    }
 
-    window.changeSmokeCount = function(delta) {
-      if (viewTarget !== 'me') return;
-      myData.smoked = Math.max(0, (myData.smoked || 0) + delta);
-      renderUI(myData);
-      saveDataToFirebase({ smoked: myData.smoked });
-    };
+    function deleteMeal(id) {
+      logs[selectedDate].meals = logs[selectedDate].meals.filter(m => m.id !== id);
+      saveToLocalStorage();
+      renderAll();
+    }
 
-    window.handleBodySubmit = function(e) {
+    // 身体・睡眠データ送信
+    function handleBodySubmit(e) {
       e.preventDefault();
-      if (viewTarget !== 'me') return;
-      myData.weight = parseFloat(document.getElementById('inputWeight').value);
-      myData.fat = parseFloat(document.getElementById('inputFat').value);
-      renderUI(myData);
-      saveDataToFirebase({ weight: myData.weight, fat: myData.fat });
-      alert('身体データを更新しました！');
-    };
+      const w = parseFloat(document.getElementById('inputWeight').value);
+      const f = parseFloat(document.getElementById('inputFat').value);
 
-    window.handleSleepSubmit = function(e) {
+      if (!isNaN(w)) logs[selectedDate].weight = w;
+      if (!isNaN(f)) logs[selectedDate].fat = f;
+
+      saveToLocalStorage();
+      renderAll();
+      alert('身体データを保存しました！');
+    }
+
+    function handleSleepSubmit(e) {
       e.preventDefault();
-      if (viewTarget !== 'me') return;
-      myData.sleep = parseFloat(document.getElementById('inputSleep').value);
-      renderUI(myData);
-      saveDataToFirebase({ sleep: myData.sleep });
-      alert('睡眠データを記録しました！');
-    };
+      const s = parseFloat(document.getElementById('inputSleep').value);
 
-    window.openGoalCalModal = function() { document.getElementById('goalCalModal').classList.remove('hidden'); };
-    window.closeGoalCalModal = function() { document.getElementById('goalCalModal').classList.add('hidden'); };
-    window.saveTargetCalorie = function() {
+      if (!isNaN(s)) logs[selectedDate].sleep = s;
+
+      saveToLocalStorage();
+      renderAll();
+      alert('睡眠データを保存しました！');
+    }
+
+    // 喫煙カウント
+    function changeSmokeCount(delta) {
+      let current = logs[selectedDate].smoked || 0;
+      logs[selectedDate].smoked = Math.max(0, current + delta);
+      saveToLocalStorage();
+      renderAll();
+    }
+
+    function updatePrevSmokeAvg(val) {
+      const num = parseInt(val, 10);
+      if (!isNaN(num) && num >= 0) {
+        settings.prevSmokeAvg = num;
+        saveToLocalStorage();
+        renderAll();
+      }
+    }
+
+    // モーダル操作
+    function openMealModal() { document.getElementById('mealModal').classList.remove('hidden'); }
+    function closeMealModal() { document.getElementById('mealModal').classList.add('hidden'); }
+    function openGoalCalModal() { document.getElementById('goalCalModal').classList.remove('hidden'); }
+    function closeGoalCalModal() { document.getElementById('goalCalModal').classList.add('hidden'); }
+    function openWeightGoalModal() { document.getElementById('targetWeightModal').classList.remove('hidden'); }
+    function closeWeightGoalModal() { document.getElementById('targetWeightModal').classList.add('hidden'); }
+
+    function saveTargetCalorie() {
       const val = parseInt(document.getElementById('targetCalInput').value, 10);
       if (val && val > 0) {
-        myData.goalCal = val;
-        renderUI(myData);
-        saveDataToFirebase({ goalCal: val });
+        settings.goalCal = val;
+        saveToLocalStorage();
+        renderAll();
         closeGoalCalModal();
       }
-    };
+    }
 
-    window.openWeightGoalModal = function() { document.getElementById('targetWeightModal').classList.remove('hidden'); };
-    window.closeWeightGoalModal = function() { document.getElementById('targetWeightModal').classList.add('hidden'); };
-    window.saveTargetWeight = function() {
+    function saveTargetWeight() {
       const val = parseFloat(document.getElementById('targetWeightInput').value);
       if (val && val > 0) {
-        myData.targetWeight = val;
-        renderUI(myData);
-        saveDataToFirebase({ targetWeight: val });
+        settings.targetWeight = val;
+        saveToLocalStorage();
+        renderAll();
         closeWeightGoalModal();
       }
-    };
+    }
 
-    window.updateSmokingCalculations = function() {
-      const val = parseInt(document.getElementById('prevSmokeAvg').value, 10);
-      if (val >= 0) {
-        myData.prevAvg = val;
-        renderUI(myData);
-        saveDataToFirebase({ prevAvg: val });
-      }
-    };
-
-    window.savePartnerCode = function() {
-      const code = document.getElementById('partnerCodeInput').value.trim();
-      if (code) {
-        partnerId = code;
-        localStorage.setItem('partnerId', code);
-        listenPartnerData();
-        togglePairModal();
-        alert('パートナーを接続しました！');
-      }
-    };
-
-    window.togglePairModal = function() { document.getElementById('pairModal').classList.toggle('hidden'); };
-
-    window.switchTab = function(tabId) {
+    function switchTab(tabId) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
       document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+
       document.querySelectorAll('.nav-btn').forEach(btn => {
         btn.classList.remove('text-sky-500');
         btn.classList.add('text-slate-400');
@@ -576,7 +642,13 @@
         activeNav.classList.remove('text-slate-400');
         activeNav.classList.add('text-sky-500');
       }
-    };
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/[&<>"']/g, function(m) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
+      });
+    }
   </script>
 </body>
 </html>
