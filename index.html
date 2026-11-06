@@ -42,7 +42,7 @@
         </button>
       </div>
 
-      <!-- User Switcher Tab (Me vs Partner) -->
+      <!-- User Switcher Tab -->
       <div class="flex bg-sky-600/30 p-1 rounded-xl mt-3 text-xs font-bold">
         <button id="viewMeBtn" onclick="switchViewUser('me')" class="flex-1 py-1.5 rounded-lg bg-white text-sky-600 shadow">
           自分
@@ -53,93 +53,121 @@
       </div>
     </header>
 
-    <!-- Main Content Area Container -->
+    <!-- Main Content Area -->
     <main class="flex-1 p-4 space-y-4 overflow-y-auto">
 
-      <!-- DASHBOARD TAB -->
+      <!-- DASHBOARD TAB (全項目サマリー) -->
       <section id="tab-dashboard" class="tab-content space-y-4">
-        <!-- Partner Notice Banner -->
-        <div id="partnerBanner" class="hidden bg-pink-50 border border-pink-200 text-pink-700 p-3 rounded-xl text-xs flex justify-between items-center">
-          <span><i class="fa-solid fa-eye mr-1"></i> パートナーの記録を表示中</span>
+        
+        <!-- Partner View Banner -->
+        <div id="partnerBanner" class="hidden bg-pink-50 border border-pink-200 text-pink-700 p-2.5 rounded-xl text-xs flex justify-between items-center">
+          <span><i class="fa-solid fa-eye mr-1"></i> パートナーのデータ表示中</span>
           <span class="font-bold text-[10px] bg-pink-200 px-2 py-0.5 rounded-full">閲覧モード</span>
         </div>
 
-        <!-- Target Calorie & Progress Bar -->
-        <div class="glass-card rounded-2xl p-4 shadow-sm">
-          <div class="flex justify-between items-center mb-2">
-            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">本日のカロリーバランス</span>
-            <span id="dashCalStatus" class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-sky-100 text-sky-700">順調</span>
+        <div class="flex justify-between items-center">
+          <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider">本日の全項目サマリー</h2>
+          <span class="text-[10px] font-bold text-sky-600 bg-sky-100 px-2.5 py-0.5 rounded-full">リアルタイム集計</span>
+        </div>
+
+        <!-- 1. 食事サマリー -->
+        <div class="glass-card rounded-2xl p-4 shadow-sm border-l-4 border-l-sky-400">
+          <div class="flex justify-between items-center mb-1">
+            <span class="text-xs font-bold text-slate-500 flex items-center gap-1.5">
+              <i class="fa-solid fa-utensils text-sky-400"></i> カロリー管理
+            </span>
+            <button onclick="openGoalCalModal()" class="text-[10px] font-bold text-sky-600 bg-sky-50 hover:bg-sky-100 px-2 py-0.5 rounded border border-sky-200">
+              目標設定
+            </button>
           </div>
           <div class="flex items-baseline justify-between mb-2">
             <div>
-              <span class="text-3xl font-extrabold text-slate-800" id="dashIntakeCal">1,450</span>
+              <span class="text-2xl font-black text-slate-800" id="dashIntakeCal">1,450</span>
               <span class="text-xs font-semibold text-slate-500"> / <span id="dashGoalCal">2,000</span> kcal</span>
             </div>
             <div class="text-right">
-              <span class="text-xs text-slate-500 block">差分</span>
-              <span class="text-lg font-bold text-sky-600" id="dashRemainingCal">550 kcal</span>
+              <span class="text-[10px] text-slate-400 block" id="dashCalDiffLabel">残り</span>
+              <span class="text-base font-extrabold text-sky-600" id="dashRemainingCal">550 kcal</span>
             </div>
           </div>
-          <div class="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
-            <div id="dashCalProgress" class="bg-gradient-to-r from-sky-400 to-pink-400 h-3 rounded-full transition-all duration-500" style="width: 72.5%"></div>
+          <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+            <div id="dashCalProgress" class="bg-gradient-to-r from-sky-400 to-pink-400 h-2.5 rounded-full transition-all duration-300" style="width: 72.5%"></div>
           </div>
         </div>
 
-        <!-- Quick Summary Cards Grid -->
-        <div class="grid grid-cols-2 gap-3">
-          <!-- Weight Card -->
-          <div class="glass-card p-3.5 rounded-2xl shadow-sm">
-            <div class="flex justify-between items-start mb-1">
-              <span class="text-xs font-bold text-slate-500">体重</span>
-              <div class="w-7 h-7 rounded-lg bg-sky-100 text-sky-600 flex items-center justify-center text-xs">
-                <i class="fa-solid fa-weight-scale"></i>
-              </div>
+        <!-- 2. 体重・目標体重サマリー -->
+        <div class="glass-card rounded-2xl p-4 shadow-sm border-l-4 border-l-indigo-400 space-y-2">
+          <div class="flex justify-between items-center">
+            <span class="text-xs font-bold text-slate-500 flex items-center gap-1.5">
+              <i class="fa-solid fa-weight-scale text-indigo-400"></i> 体重データ
+            </span>
+            <button onclick="openWeightGoalModal()" class="text-[10px] font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-2 py-0.5 rounded border border-indigo-200">
+              目標設定
+            </button>
+          </div>
+          <div class="grid grid-cols-3 gap-2 text-center bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+            <div>
+              <span class="text-[10px] text-slate-400 block font-semibold">現在</span>
+              <span class="text-lg font-black text-slate-800" id="dashWeight">58.4</span>
+              <span class="text-[10px] text-slate-500">kg</span>
             </div>
-            <div class="flex items-baseline gap-1">
-              <span class="text-2xl font-black text-slate-800" id="dashWeight">58.4</span>
-              <span class="text-xs text-slate-500">kg</span>
+            <div class="border-x border-slate-200">
+              <span class="text-[10px] text-slate-400 block font-semibold">目標</span>
+              <span class="text-lg font-black text-slate-700" id="dashTargetWeight">53.0</span>
+              <span class="text-[10px] text-slate-500">kg</span>
+            </div>
+            <div>
+              <span class="text-[10px] text-slate-400 block font-semibold">あと</span>
+              <span class="text-lg font-black text-pink-500" id="dashWeightDiff">-5.4</span>
+              <span class="text-[10px] text-slate-500">kg</span>
             </div>
           </div>
+        </div>
 
-          <!-- Body Fat Card -->
+        <!-- 3. その他（体脂肪率・睡眠・喫煙/節約）グリッド -->
+        <div class="grid grid-cols-2 gap-3">
+          <!-- 体脂肪率 -->
           <div class="glass-card p-3.5 rounded-2xl shadow-sm">
             <div class="flex justify-between items-start mb-1">
               <span class="text-xs font-bold text-slate-500">体脂肪率</span>
-              <div class="w-7 h-7 rounded-lg bg-pink-100 text-pink-500 flex items-center justify-center text-xs">
+              <div class="w-6 h-6 rounded-lg bg-pink-100 text-pink-500 flex items-center justify-center text-xs">
                 <i class="fa-solid fa-percent"></i>
               </div>
             </div>
             <div class="flex items-baseline gap-1">
-              <span class="text-2xl font-black text-slate-800" id="dashFat">21.2</span>
+              <span class="text-xl font-black text-slate-800" id="dashFat">21.2</span>
               <span class="text-xs text-slate-500">%</span>
             </div>
           </div>
 
-          <!-- Sleep Card -->
+          <!-- 睡眠時間 -->
           <div class="glass-card p-3.5 rounded-2xl shadow-sm">
             <div class="flex justify-between items-start mb-1">
-              <span class="text-xs font-bold text-slate-500">睡眠</span>
-              <div class="w-7 h-7 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs">
+              <span class="text-xs font-bold text-slate-500">睡眠時間</span>
+              <div class="w-6 h-6 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs">
                 <i class="fa-solid fa-moon"></i>
               </div>
             </div>
             <div class="flex items-baseline gap-1">
-              <span class="text-2xl font-black text-slate-800" id="dashSleep">7.5</span>
+              <span class="text-xl font-black text-slate-800" id="dashSleep">7.5</span>
               <span class="text-xs text-slate-500">時間</span>
             </div>
           </div>
+        </div>
 
-          <!-- Smoking Savings Card -->
-          <div class="glass-card p-3.5 rounded-2xl shadow-sm border-l-4 border-l-pink-500">
-            <div class="flex justify-between items-start mb-1">
-              <span class="text-xs font-bold text-slate-500">節煙節約</span>
-              <div class="w-7 h-7 rounded-lg bg-pink-50 text-pink-600 flex items-center justify-center text-xs">
-                <i class="fa-solid fa-piggy-bank"></i>
-              </div>
-            </div>
+        <!-- 4. 喫煙・節約サマリー -->
+        <div class="glass-card p-4 rounded-2xl shadow-sm border-l-4 border-l-pink-500 flex justify-between items-center">
+          <div>
+            <span class="text-xs font-bold text-slate-500 block mb-0.5">本日の喫煙本数</span>
             <div class="flex items-baseline gap-1">
-              <span class="text-2xl font-black text-pink-600" id="dashSavings">¥3,840</span>
+              <span class="text-2xl font-black text-slate-800" id="dashTodaySmoke">3</span>
+              <span class="text-xs text-slate-500">本</span>
             </div>
+          </div>
+          <div class="text-right border-l border-slate-200 pl-4">
+            <span class="text-xs font-bold text-slate-500 block mb-0.5">累計節約額 (20本=¥640)</span>
+            <span class="text-xl font-black text-pink-600" id="dashSavings">¥0</span>
+            <span class="text-[10px] text-slate-400 block">削減: <span id="dashReducedCigs">0</span>本</span>
           </div>
         </div>
       </section>
@@ -152,6 +180,9 @@
               <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">食事管理</span>
               <h2 class="text-lg font-black text-slate-800">本日の食事バランス</h2>
             </div>
+            <button onclick="openGoalCalModal()" class="text-xs bg-sky-50 text-sky-600 border border-sky-200 px-2.5 py-1 rounded-lg font-bold hover:bg-sky-100">
+              <i class="fa-solid fa-pen"></i> 目標変更
+            </button>
           </div>
 
           <div class="grid grid-cols-3 gap-2 bg-slate-50 p-3 rounded-xl text-center border border-slate-100">
@@ -161,7 +192,7 @@
               <span class="text-[10px] text-slate-400">kcal</span>
             </div>
             <div class="border-x border-slate-200">
-              <span class="text-[10px] font-semibold text-slate-400 block">摂取</span>
+              <span class="text-[10px] font-semibold text-slate-400 block">現在の摂取</span>
               <span class="text-base font-extrabold text-sky-600" id="mealCurrentVal">1,450</span>
               <span class="text-[10px] text-slate-400">kcal</span>
             </div>
@@ -182,12 +213,57 @@
         </div>
       </section>
 
+      <!-- BODY LOG TAB -->
+      <section id="tab-body" class="tab-content space-y-4 hidden">
+        <div class="glass-card p-4 rounded-2xl shadow-sm space-y-3">
+          <div class="flex justify-between items-center">
+            <h3 class="text-sm font-bold text-slate-700 flex items-center gap-2">
+              <i class="fa-solid fa-weight-scale text-sky-500"></i> 体重・体脂肪率の入力
+            </h3>
+            <button onclick="openWeightGoalModal()" class="text-xs bg-indigo-50 text-indigo-600 border border-indigo-200 px-2 py-1 rounded font-bold">
+              目標設定
+            </button>
+          </div>
+          <form onsubmit="handleBodySubmit(event)" class="space-y-3">
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="text-xs font-semibold text-slate-500 block mb-1">現在の体重 (kg)</label>
+                <input type="number" step="0.1" id="inputWeight" value="58.4" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-sm font-bold text-slate-800">
+              </div>
+              <div>
+                <label class="text-xs font-semibold text-slate-500 block mb-1">体脂肪率 (%)</label>
+                <input type="number" step="0.1" id="inputFat" value="21.2" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-sm font-bold text-slate-800">
+              </div>
+            </div>
+            <button type="submit" class="w-full bg-sky-500 text-white font-bold py-2.5 rounded-xl hover:bg-sky-600 transition text-sm">
+              身体データを更新
+            </button>
+          </form>
+        </div>
+
+        <!-- Sleep Form -->
+        <div class="glass-card p-4 rounded-2xl shadow-sm space-y-3">
+          <h3 class="text-sm font-bold text-slate-700 flex items-center gap-2">
+            <i class="fa-solid fa-moon text-indigo-500"></i> 睡眠記録
+          </h3>
+          <form onsubmit="handleSleepSubmit(event)" class="space-y-3">
+            <div>
+              <label class="text-xs font-semibold text-slate-500 block mb-1">睡眠時間 (時間)</label>
+              <input type="number" step="0.5" id="inputSleep" value="7.5" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-sm font-bold text-slate-800">
+            </div>
+            <button type="submit" class="w-full bg-indigo-500 text-white font-bold py-2.5 rounded-xl hover:bg-indigo-600 transition text-sm">
+              睡眠データを記録
+            </button>
+          </form>
+        </div>
+      </section>
+
       <!-- SMOKING LOG TAB -->
       <section id="tab-smoking" class="tab-content space-y-4 hidden">
         <div class="bg-gradient-to-br from-pink-500 to-rose-400 text-white p-5 rounded-2xl shadow-md text-center">
-          <span class="text-xs font-bold uppercase tracking-widest text-pink-100 block mb-1">節約成果</span>
-          <div class="text-4xl font-black mb-1" id="smokeTotalSavings">¥3,840</div>
-          <p class="text-xs text-pink-100">1箱640円換算</p>
+          <span class="text-xs font-bold uppercase tracking-widest text-pink-100 block mb-1">節約成果 (20本削減 = ¥640)</span>
+          <div class="text-4xl font-black mb-1" id="smokeTotalSavings">¥0</div>
+          <p class="text-xs text-pink-100">累計削減本数: <span id="smokeTotalReduced">0</span> 本</p>
         </div>
 
         <div class="glass-card p-4 rounded-2xl shadow-sm text-center">
@@ -196,6 +272,14 @@
           <div id="smokeActionBtns" class="flex justify-center gap-3">
             <button onclick="changeSmokeCount(-1)" class="w-12 h-12 rounded-xl bg-slate-100 font-black text-xl">-</button>
             <button onclick="changeSmokeCount(1)" class="flex-1 bg-pink-500 text-white font-bold py-3 rounded-xl shadow">+ 1本記録</button>
+          </div>
+        </div>
+
+        <div class="glass-card p-4 rounded-2xl shadow-sm space-y-3">
+          <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider">節煙基準設定</h3>
+          <div>
+            <label class="text-[11px] font-semibold text-slate-500 block mb-1">以前の1日平均本数</label>
+            <input type="number" id="prevSmokeAvg" value="15" onchange="updateSmokingCalculations()" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-sm font-bold text-slate-800">
           </div>
         </div>
       </section>
@@ -212,11 +296,45 @@
         <i class="fa-solid fa-utensils text-lg"></i>
         <span class="text-[10px] font-bold">食事</span>
       </button>
+      <button onclick="switchTab('body')" id="nav-body" class="nav-btn text-slate-400 flex flex-col items-center">
+        <i class="fa-solid fa-heart-pulse text-lg"></i>
+        <span class="text-[10px] font-bold">身体・睡眠</span>
+      </button>
       <button onclick="switchTab('smoking')" id="nav-smoking" class="nav-btn text-slate-400 flex flex-col items-center">
         <i class="fa-solid fa-smoking text-lg"></i>
-        <span class="text-[10px] font-bold">喫煙</span>
+        <span class="text-[10px] font-bold">喫煙・節約</span>
       </button>
     </nav>
+
+    <!-- EDIT TARGET CALORIE MODAL -->
+    <div id="goalCalModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+      <div class="bg-white w-full max-w-xs rounded-2xl p-5 space-y-4 shadow-2xl">
+        <h3 class="text-base font-bold text-slate-800">目標カロリー設定</h3>
+        <div>
+          <label class="text-xs font-semibold text-slate-500 block mb-1">1日の目標カロリー (kcal)</label>
+          <input type="number" id="targetCalInput" value="2000" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-base font-bold text-slate-800">
+        </div>
+        <div class="flex gap-2">
+          <button onclick="closeGoalCalModal()" class="flex-1 bg-slate-100 text-slate-600 font-bold py-2 rounded-lg text-sm">キャンセル</button>
+          <button onclick="saveTargetCalorie()" class="flex-1 bg-sky-500 text-white font-bold py-2 rounded-lg text-sm shadow">保存</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- EDIT TARGET WEIGHT MODAL -->
+    <div id="targetWeightModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+      <div class="bg-white w-full max-w-xs rounded-2xl p-5 space-y-4 shadow-2xl">
+        <h3 class="text-base font-bold text-slate-800">目標体重設定</h3>
+        <div>
+          <label class="text-xs font-semibold text-slate-500 block mb-1">目標体重 (kg)</label>
+          <input type="number" step="0.1" id="targetWeightInput" value="53.0" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-base font-bold text-slate-800">
+        </div>
+        <div class="flex gap-2">
+          <button onclick="closeWeightGoalModal()" class="flex-1 bg-slate-100 text-slate-600 font-bold py-2 rounded-lg text-sm">キャンセル</button>
+          <button onclick="saveTargetWeight()" class="flex-1 bg-indigo-500 text-white font-bold py-2 rounded-lg text-sm shadow">保存</button>
+        </div>
+      </div>
+    </div>
 
     <!-- PAIRING MODAL -->
     <div id="pairModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
@@ -226,9 +344,7 @@
         </h3>
         <div>
           <label class="text-xs text-slate-500 block mb-1">あなたのコード</label>
-          <div class="bg-slate-100 p-2.5 rounded-lg text-center font-mono font-bold text-slate-700" id="myPairCode">
-            生成中...
-          </div>
+          <div class="bg-slate-100 p-2.5 rounded-lg text-center font-mono font-bold text-slate-700" id="myPairCode">生成中...</div>
         </div>
         <div>
           <label class="text-xs text-slate-500 block mb-1">相手のコードを入力</label>
@@ -249,7 +365,6 @@
     import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
     import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-    // 1. Firebaseの設定情報（ご自身のConsoleから取得して貼り付けてください）
     const firebaseConfig = {
       apiKey: "YOUR_API_KEY",
       authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
@@ -265,12 +380,11 @@
 
     let currentUserId = null;
     let partnerId = localStorage.getItem('partnerId') || null;
-    let viewTarget = 'me'; // 'me' or 'partner'
+    let viewTarget = 'me';
 
-    let myData = { intakeCal: 1450, goalCal: 2000, weight: 58.4, fat: 21.2, sleep: 7.5, smoked: 3 };
-    let partnerData = { intakeCal: 0, goalCal: 2000, weight: 0, fat: 0, sleep: 0, smoked: 0 };
+    let myData = { intakeCal: 1450, goalCal: 2000, weight: 58.4, targetWeight: 53.0, fat: 21.2, sleep: 7.5, smoked: 3, prevAvg: 15, accumReducedCigs: 0 };
+    let partnerData = { intakeCal: 0, goalCal: 2000, weight: 0, targetWeight: 0, fat: 0, sleep: 0, smoked: 0, prevAvg: 15, accumReducedCigs: 0 };
 
-    // 匿名ログイン処理
     signInAnonymously(auth).catch(console.error);
 
     onAuthStateChanged(auth, (user) => {
@@ -278,17 +392,15 @@
         currentUserId = user.uid;
         document.getElementById('myPairCode').textContent = currentUserId.slice(0, 8);
         
-        // 自分のデータ同期設定
         onSnapshot(doc(db, "health_logs", currentUserId), (docSnap) => {
           if (docSnap.exists()) {
-            myData = docSnap.data();
+            myData = { ...myData, ...docSnap.data() };
             if (viewTarget === 'me') renderUI(myData);
           } else {
             saveDataToFirebase(myData);
           }
         });
 
-        // パートナーのデータ同期設定
         if (partnerId) {
           document.getElementById('pairStatusDot').className = "absolute top-0 right-0 w-3 h-3 bg-emerald-400 border-2 border-white rounded-full";
           listenPartnerData();
@@ -300,7 +412,7 @@
       if (!partnerId) return;
       onSnapshot(doc(db, "health_logs", partnerId), (docSnap) => {
         if (docSnap.exists()) {
-          partnerData = docSnap.data();
+          partnerData = { ...partnerData, ...docSnap.data() };
           if (viewTarget === 'partner') renderUI(partnerData);
         }
       });
@@ -311,16 +423,54 @@
       await setDoc(doc(db, "health_logs", currentUserId), data, { merge: true });
     }
 
-    // UI Rendering
     window.renderUI = function(data) {
-      document.getElementById('dashIntakeCal').textContent = data.intakeCal || 0;
-      document.getElementById('dashGoalCal').textContent = data.goalCal || 2000;
-      document.getElementById('dashRemainingCal').textContent = `${(data.goalCal || 2000) - (data.intakeCal || 0)} kcal`;
-      document.getElementById('dashWeight').textContent = data.weight || '-';
+      // 食事サマリー
+      const intake = data.intakeCal || 0;
+      const goalCal = data.goalCal || 2000;
+      const remCal = goalCal - intake;
+      document.getElementById('dashIntakeCal').textContent = intake.toLocaleString();
+      document.getElementById('dashGoalCal').textContent = goalCal.toLocaleString();
+      document.getElementById('dashRemainingCal').textContent = `${Math.abs(remCal)} kcal`;
+      document.getElementById('dashCalDiffLabel').textContent = remCal >= 0 ? '残り' : 'オーバー';
+      document.getElementById('dashCalProgress').style.width = `${Math.min((intake / goalCal) * 100, 100)}%`;
+
+      document.getElementById('mealTargetVal').textContent = goalCal.toLocaleString();
+      document.getElementById('mealCurrentVal').textContent = intake.toLocaleString();
+      document.getElementById('mealDiffVal').textContent = Math.abs(remCal).toLocaleString();
+      document.getElementById('mealDiffLabel').textContent = remCal >= 0 ? '残り' : 'オーバー';
+
+      // 体重サマリー
+      const weight = data.weight || 0;
+      const targetWeight = data.targetWeight || 50.0;
+      const diffWeight = (weight - targetWeight).toFixed(1);
+      document.getElementById('dashWeight').textContent = weight || '-';
+      document.getElementById('dashTargetWeight').textContent = targetWeight || '-';
+      document.getElementById('dashWeightDiff').textContent = diffWeight > 0 ? `-${diffWeight}` : `+${Math.abs(diffWeight)}`;
+
+      document.getElementById('inputWeight').value = weight;
+      document.getElementById('inputFat').value = data.fat || 0;
+      document.getElementById('inputSleep').value = data.sleep || 0;
+
+      // その他
       document.getElementById('dashFat').textContent = data.fat || '-';
       document.getElementById('dashSleep').textContent = data.sleep || '-';
-      document.getElementById('todaySmokeCount').textContent = data.smoked || 0;
-      document.getElementById('dashSavings').textContent = `¥${((15 - (data.smoked || 0)) * 32 * 12).toLocaleString()}`;
+
+      // 喫煙・節約サマリー (20本=640円計算)
+      const smoked = data.smoked || 0;
+      const prevAvg = data.prevAvg || 15;
+      const savedTodayCigs = Math.max(0, prevAvg - smoked);
+      const totalReduced = (data.accumReducedCigs || 0) + savedTodayCigs;
+      
+      // 20本減るごとに640円の節約
+      const packsSaved = Math.floor(totalReduced / 20);
+      const totalSavingsYen = packsSaved * 640;
+
+      document.getElementById('dashTodaySmoke').textContent = smoked;
+      document.getElementById('todaySmokeCount').textContent = smoked;
+      document.getElementById('dashSavings').textContent = `¥${totalSavingsYen.toLocaleString()}`;
+      document.getElementById('smokeTotalSavings').textContent = `¥${totalSavingsYen.toLocaleString()}`;
+      document.getElementById('dashReducedCigs').textContent = totalReduced;
+      document.getElementById('smokeTotalReduced').textContent = totalReduced;
     };
 
     window.switchViewUser = function(target) {
@@ -333,13 +483,11 @@
         meBtn.className = "flex-1 py-1.5 rounded-lg bg-white text-sky-600 shadow font-bold";
         partnerBtn.className = "flex-1 py-1.5 rounded-lg text-white/80 hover:text-white font-bold";
         partnerBanner.classList.add('hidden');
-        document.getElementById('addMealBtn').classList.remove('hidden');
         renderUI(myData);
       } else {
         partnerBtn.className = "flex-1 py-1.5 rounded-lg bg-white text-pink-600 shadow font-bold";
         meBtn.className = "flex-1 py-1.5 rounded-lg text-white/80 hover:text-white font-bold";
         partnerBanner.classList.remove('hidden');
-        document.getElementById('addMealBtn').classList.add('hidden');
         renderUI(partnerData);
       }
     };
@@ -349,6 +497,58 @@
       myData.smoked = Math.max(0, (myData.smoked || 0) + delta);
       renderUI(myData);
       saveDataToFirebase({ smoked: myData.smoked });
+    };
+
+    window.handleBodySubmit = function(e) {
+      e.preventDefault();
+      if (viewTarget !== 'me') return;
+      myData.weight = parseFloat(document.getElementById('inputWeight').value);
+      myData.fat = parseFloat(document.getElementById('inputFat').value);
+      renderUI(myData);
+      saveDataToFirebase({ weight: myData.weight, fat: myData.fat });
+      alert('身体データを更新しました！');
+    };
+
+    window.handleSleepSubmit = function(e) {
+      e.preventDefault();
+      if (viewTarget !== 'me') return;
+      myData.sleep = parseFloat(document.getElementById('inputSleep').value);
+      renderUI(myData);
+      saveDataToFirebase({ sleep: myData.sleep });
+      alert('睡眠データを記録しました！');
+    };
+
+    window.openGoalCalModal = function() { document.getElementById('goalCalModal').classList.remove('hidden'); };
+    window.closeGoalCalModal = function() { document.getElementById('goalCalModal').classList.add('hidden'); };
+    window.saveTargetCalorie = function() {
+      const val = parseInt(document.getElementById('targetCalInput').value, 10);
+      if (val && val > 0) {
+        myData.goalCal = val;
+        renderUI(myData);
+        saveDataToFirebase({ goalCal: val });
+        closeGoalCalModal();
+      }
+    };
+
+    window.openWeightGoalModal = function() { document.getElementById('targetWeightModal').classList.remove('hidden'); };
+    window.closeWeightGoalModal = function() { document.getElementById('targetWeightModal').classList.add('hidden'); };
+    window.saveTargetWeight = function() {
+      const val = parseFloat(document.getElementById('targetWeightInput').value);
+      if (val && val > 0) {
+        myData.targetWeight = val;
+        renderUI(myData);
+        saveDataToFirebase({ targetWeight: val });
+        closeWeightGoalModal();
+      }
+    };
+
+    window.updateSmokingCalculations = function() {
+      const val = parseInt(document.getElementById('prevSmokeAvg').value, 10);
+      if (val >= 0) {
+        myData.prevAvg = val;
+        renderUI(myData);
+        saveDataToFirebase({ prevAvg: val });
+      }
     };
 
     window.savePartnerCode = function() {
@@ -362,13 +562,20 @@
       }
     };
 
-    window.togglePairModal = function() {
-      document.getElementById('pairModal').classList.toggle('hidden');
-    };
+    window.togglePairModal = function() { document.getElementById('pairModal').classList.toggle('hidden'); };
 
     window.switchTab = function(tabId) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
       document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('text-sky-500');
+        btn.classList.add('text-slate-400');
+      });
+      const activeNav = document.getElementById(`nav-${tabId}`);
+      if (activeNav) {
+        activeNav.classList.remove('text-slate-400');
+        activeNav.classList.add('text-sky-500');
+      }
     };
   </script>
 </body>
