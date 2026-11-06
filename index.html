@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>My Health Log</title>
   
-  <!-- App Icon settings (Dynamic Glass Icon) -->
   <link rel="apple-touch-icon" id="appleTouchIcon" href="">
   <link rel="icon" id="favicon" href="">
   <meta name="apple-mobile-web-app-title" content="My Health">
@@ -29,110 +28,6 @@
     }
     .pb-safe { padding-bottom: env(safe-area-inset-bottom, 1rem); }
   </style>
-
-  <!-- ICON GENERATION SCRIPT -->
-  <script>
-    function generateGlassIcon() {
-      const canvas = document.createElement('canvas');
-      canvas.width = 512;
-      canvas.height = 512;
-      const ctx = canvas.getContext('2d');
-
-      // 1. Soft Warm Pastel Background
-      const bgGrad = ctx.createLinearGradient(0, 0, 512, 512);
-      bgGrad.addColorStop(0, '#FAF7F2');
-      bgGrad.addColorStop(1, '#F3EDE4');
-      ctx.fillStyle = bgGrad;
-      ctx.fillRect(0, 0, 512, 512);
-
-      // 2. Glass Card Base (Rounded Square)
-      const pad = 32;
-      const w = 512 - pad * 2;
-      const r = 96;
-
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(pad + r, pad);
-      ctx.arcTo(pad + w, pad, pad + w, pad + w, r);
-      ctx.arcTo(pad + w, pad + w, pad, pad + w, r);
-      ctx.arcTo(pad, pad + w, pad, pad, r);
-      ctx.arcTo(pad, pad, pad + w, pad, r);
-      ctx.closePath();
-
-      // Card Drop Shadow
-      ctx.shadowColor = 'rgba(0, 0, 0, 0.12)';
-      ctx.shadowBlur = 30;
-      ctx.shadowOffsetY = 15;
-
-      // Card Glass Fill Gradient
-      const glassGrad = ctx.createLinearGradient(pad, pad, pad + w, pad + w);
-      glassGrad.addColorStop(0, 'rgba(255, 255, 255, 0.95)');
-      glassGrad.addColorStop(0.5, 'rgba(240, 246, 255, 0.75)');
-      glassGrad.addColorStop(1, 'rgba(255, 240, 245, 0.85)');
-      ctx.fillStyle = glassGrad;
-      ctx.fill();
-      ctx.restore();
-
-      // Glass Inner Glow / Rim
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(pad + r, pad);
-      ctx.arcTo(pad + w, pad, pad + w, pad + w, r);
-      ctx.arcTo(pad + w, pad + w, pad, pad + w, r);
-      ctx.arcTo(pad, pad + w, pad, pad, r);
-      ctx.arcTo(pad, pad, pad + w, pad, r);
-      ctx.closePath();
-
-      const strokeGrad = ctx.createLinearGradient(pad, pad, pad + w, pad + w);
-      strokeGrad.addColorStop(0, 'rgba(255, 255, 255, 0.9)');
-      strokeGrad.addColorStop(0.5, 'rgba(186, 230, 253, 0.6)');
-      strokeGrad.addColorStop(1, 'rgba(251, 207, 232, 0.8)');
-      ctx.strokeStyle = strokeGrad;
-      ctx.lineWidth = 12;
-      ctx.stroke();
-      ctx.restore();
-
-      // 3. Draw 3D Glass Text "Hc"
-      ctx.save();
-      ctx.font = '900 210px "Plus Jakarta Sans", sans-serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-
-      const cx = 256;
-      const cy = 266;
-
-      // Text Soft Shadow
-      ctx.shadowColor = 'rgba(56, 189, 248, 0.35)';
-      ctx.shadowBlur = 25;
-      ctx.shadowOffsetY = 10;
-
-      // Text Glass Gradient
-      const textGrad = ctx.createLinearGradient(150, 150, 360, 360);
-      textGrad.addColorStop(0, '#38BDF8');   // Sky Blue
-      textGrad.addColorStop(0.5, '#60A5FA'); // Soft Blue
-      textGrad.addColorStop(1, '#F472B6');   // Pink
-      ctx.fillStyle = textGrad;
-      ctx.fillText('Hc', cx, cy);
-
-      // Text Glass Highlight Layer
-      ctx.shadowColor = 'transparent';
-      const textHighlight = ctx.createLinearGradient(150, 150, 360, 360);
-      textHighlight.addColorStop(0, 'rgba(255, 255, 255, 0.8)');
-      textHighlight.addColorStop(0.4, 'rgba(255, 255, 255, 0.2)');
-      textHighlight.addColorStop(1, 'rgba(255, 255, 255, 0)');
-      ctx.fillStyle = textHighlight;
-      ctx.fillText('Hc', cx - 2, cy - 2);
-
-      ctx.restore();
-
-      // Convert Canvas to Data URL & Set Icons
-      const dataUrl = canvas.toDataURL('image/png');
-      document.getElementById('appleTouchIcon').href = dataUrl;
-      document.getElementById('favicon').href = dataUrl;
-    }
-
-    document.addEventListener('DOMContentLoaded', generateGlassIcon);
-  </script>
 </head>
 <body class="flex justify-center bg-slate-100 min-h-screen">
 
@@ -144,13 +39,13 @@
         <div>
           <div class="flex items-center gap-2">
             <span class="text-xs font-semibold tracking-wider text-sky-100 uppercase" id="headerDateDisplay">2026/11/06 Fri.</span>
-            <input type="date" id="datePicker" onchange="changeDate(this.value)" class="bg-sky-600/40 text-white text-[10px] px-1.5 py-0.5 rounded border border-white/20 focus:outline-none">
+            <input type="date" id="datePicker" onchange="window.changeDate(this.value)" class="bg-sky-600/40 text-white text-[10px] px-1.5 py-0.5 rounded border border-white/20 focus:outline-none">
           </div>
           <h1 class="text-xl font-black tracking-tight flex items-center gap-2 mt-0.5">
             <i class="fa-solid font-bold fa-heart-pulse text-pink-300"></i> My Health Log
           </h1>
         </div>
-        <button onclick="togglePairModal()" class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition text-white border border-white/30 relative">
+        <button onclick="window.togglePairModal()" class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition text-white border border-white/30 relative">
           <i class="fa-solid fa-users"></i>
           <span id="pairStatusDot" class="absolute top-0 right-0 w-3 h-3 bg-rose-400 border-2 border-white rounded-full"></span>
         </button>
@@ -158,10 +53,10 @@
 
       <!-- User Switcher Tab -->
       <div class="flex bg-sky-600/30 p-1 rounded-xl mt-3 text-xs font-bold">
-        <button id="viewMeBtn" onclick="switchViewUser('me')" class="flex-1 py-1.5 rounded-lg bg-white text-sky-600 shadow">
+        <button id="viewMeBtn" onclick="window.switchViewUser('me')" class="flex-1 py-1.5 rounded-lg bg-white text-sky-600 shadow">
           自分
         </button>
-        <button id="viewPartnerBtn" onclick="switchViewUser('partner')" class="flex-1 py-1.5 rounded-lg text-white/80 hover:text-white">
+        <button id="viewPartnerBtn" onclick="window.switchViewUser('partner')" class="flex-1 py-1.5 rounded-lg text-white/80 hover:text-white">
           パートナー
         </button>
       </div>
@@ -189,7 +84,7 @@
             <span class="text-xs font-bold text-slate-500 flex items-center gap-1.5">
               <i class="fa-solid fa-utensils text-sky-400"></i> カロリー管理
             </span>
-            <button onclick="openGoalCalModal()" class="text-[10px] font-bold text-sky-600 bg-sky-50 hover:bg-sky-100 px-2 py-0.5 rounded border border-sky-200 edit-only">
+            <button onclick="window.openGoalCalModal()" class="text-[10px] font-bold text-sky-600 bg-sky-50 hover:bg-sky-100 px-2 py-0.5 rounded border border-sky-200 edit-only">
               目標設定
             </button>
           </div>
@@ -214,7 +109,7 @@
             <span class="text-xs font-bold text-slate-500 flex items-center gap-1.5">
               <i class="fa-solid fa-weight-scale text-indigo-400"></i> 体重データ
             </span>
-            <button onclick="openWeightGoalModal()" class="text-[10px] font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-2 py-0.5 rounded border border-indigo-200 edit-only">
+            <button onclick="window.openWeightGoalModal()" class="text-[10px] font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-2 py-0.5 rounded border border-indigo-200 edit-only">
               目標設定
             </button>
           </div>
@@ -291,7 +186,7 @@
               <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">食事管理</span>
               <h2 class="text-lg font-black text-slate-800">本日の食事バランス</h2>
             </div>
-            <button onclick="openGoalCalModal()" class="text-xs bg-sky-50 text-sky-600 border border-sky-200 px-2.5 py-1 rounded-lg font-bold hover:bg-sky-100 edit-only">
+            <button onclick="window.openGoalCalModal()" class="text-xs bg-sky-50 text-sky-600 border border-sky-200 px-2.5 py-1 rounded-lg font-bold hover:bg-sky-100 edit-only">
               <i class="fa-solid fa-pen"></i> 目標変更
             </button>
           </div>
@@ -315,7 +210,7 @@
           </div>
         </div>
 
-        <button onclick="openMealModal()" class="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-2 edit-only">
+        <button onclick="window.openMealModal()" class="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-2 edit-only">
           <i class="fa-solid fa-plus"></i> 食事を記録する
         </button>
 
@@ -361,11 +256,11 @@
             <h3 class="text-sm font-bold text-slate-700 flex items-center gap-2">
               <i class="fa-solid fa-weight-scale text-sky-500"></i> 体重・体脂肪率の入力
             </h3>
-            <button onclick="openWeightGoalModal()" class="text-xs bg-indigo-50 text-indigo-600 border border-indigo-200 px-2 py-1 rounded font-bold edit-only">
+            <button onclick="window.openWeightGoalModal()" class="text-xs bg-indigo-50 text-indigo-600 border border-indigo-200 px-2 py-1 rounded font-bold edit-only">
               目標設定
             </button>
           </div>
-          <form onsubmit="handleBodySubmit(event)" class="space-y-3">
+          <form onsubmit="window.handleBodySubmit(event)" class="space-y-3">
             <div class="grid grid-cols-2 gap-3">
               <div>
                 <label class="text-xs font-semibold text-slate-500 block mb-1">現在の体重 (kg)</label>
@@ -386,7 +281,7 @@
           <h3 class="text-sm font-bold text-slate-700 flex items-center gap-2">
             <i class="fa-solid fa-moon text-indigo-500"></i> 睡眠記録
           </h3>
-          <form onsubmit="handleSleepSubmit(event)" class="space-y-3">
+          <form onsubmit="window.handleSleepSubmit(event)" class="space-y-3">
             <div>
               <label class="text-xs font-semibold text-slate-500 block mb-1">睡眠時間 (時間)</label>
               <input type="number" step="0.5" id="inputSleep" placeholder="7.5" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-sm font-bold text-slate-800">
@@ -410,8 +305,8 @@
           <span class="text-xs font-bold text-slate-400 block mb-1">本日の喫煙数</span>
           <div class="text-4xl font-black text-slate-800 mb-3" id="todaySmokeCount">0</div>
           <div class="flex justify-center gap-3 edit-only">
-            <button onclick="changeSmokeCount(-1)" class="w-12 h-12 rounded-xl bg-slate-100 font-black text-xl text-slate-700 active:bg-slate-200">-</button>
-            <button onclick="changeSmokeCount(1)" class="flex-1 bg-pink-500 text-white font-bold py-3 rounded-xl shadow active:bg-pink-600">+ 1本記録</button>
+            <button onclick="window.changeSmokeCount(-1)" class="w-12 h-12 rounded-xl bg-slate-100 font-black text-xl text-slate-700 active:bg-slate-200">-</button>
+            <button onclick="window.changeSmokeCount(1)" class="flex-1 bg-pink-500 text-white font-bold py-3 rounded-xl shadow active:bg-pink-600">+ 1本記録</button>
           </div>
         </div>
 
@@ -419,7 +314,7 @@
           <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider">節煙基準設定</h3>
           <div>
             <label class="text-[11px] font-semibold text-slate-500 block mb-1">以前の1日平均本数</label>
-            <input type="number" id="prevSmokeAvg" value="15" onchange="updatePrevSmokeAvg(this.value)" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-sm font-bold text-slate-800">
+            <input type="number" id="prevSmokeAvg" value="15" onchange="window.updatePrevSmokeAvg(this.value)" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-sm font-bold text-slate-800">
           </div>
         </div>
       </section>
@@ -428,19 +323,19 @@
 
     <!-- Navigation Bar -->
     <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-white border-t border-slate-200 flex justify-around items-center py-2 z-30 pb-safe">
-      <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn text-sky-500 flex flex-col items-center">
+      <button onclick="window.switchTab('dashboard')" id="nav-dashboard" class="nav-btn text-sky-500 flex flex-col items-center">
         <i class="fa-solid fa-house text-lg"></i>
         <span class="text-[10px] font-bold">ホーム</span>
       </button>
-      <button onclick="switchTab('meals')" id="nav-meals" class="nav-btn text-slate-400 flex flex-col items-center">
+      <button onclick="window.switchTab('meals')" id="nav-meals" class="nav-btn text-slate-400 flex flex-col items-center">
         <i class="fa-solid fa-utensils text-lg"></i>
         <span class="text-[10px] font-bold">食事</span>
       </button>
-      <button onclick="switchTab('body')" id="nav-body" class="nav-btn text-slate-400 flex flex-col items-center">
+      <button onclick="window.switchTab('body')" id="nav-body" class="nav-btn text-slate-400 flex flex-col items-center">
         <i class="fa-solid fa-heart-pulse text-lg"></i>
         <span class="text-[10px] font-bold">身体・睡眠</span>
       </button>
-      <button onclick="switchTab('smoking')" id="nav-smoking" class="nav-btn text-slate-400 flex flex-col items-center">
+      <button onclick="window.switchTab('smoking')" id="nav-smoking" class="nav-btn text-slate-400 flex flex-col items-center">
         <i class="fa-solid fa-smoking text-lg"></i>
         <span class="text-[10px] font-bold">喫煙・節約</span>
       </button>
@@ -451,9 +346,9 @@
       <div class="bg-white w-full max-w-md rounded-t-3xl p-5 space-y-4 shadow-2xl">
         <div class="flex justify-between items-center border-b border-slate-100 pb-2">
           <h3 class="text-base font-bold text-slate-800">食事を記録する</h3>
-          <button onclick="closeMealModal()" class="text-slate-400 text-lg"><i class="fa-solid fa-xmark"></i></button>
+          <button onclick="window.closeMealModal()" class="text-slate-400 text-lg"><i class="fa-solid fa-xmark"></i></button>
         </div>
-        <form onsubmit="handleAddMeal(event)" class="space-y-3">
+        <form onsubmit="window.handleAddMeal(event)" class="space-y-3">
           <div>
             <label class="text-xs font-semibold text-slate-500 block mb-1">区分</label>
             <select id="mealTypeSelect" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-sm font-bold text-slate-800">
@@ -472,7 +367,7 @@
             <input type="number" id="mealCalInput" placeholder="例：450" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-sm font-bold text-slate-800">
           </div>
           <div class="pt-2 flex gap-2">
-            <button type="button" onclick="closeMealModal()" class="flex-1 bg-slate-100 text-slate-600 font-bold py-2.5 rounded-xl text-sm">キャンセル</button>
+            <button type="button" onclick="window.closeMealModal()" class="flex-1 bg-slate-100 text-slate-600 font-bold py-2.5 rounded-xl text-sm">キャンセル</button>
             <button type="submit" class="flex-1 bg-sky-500 text-white font-bold py-2.5 rounded-xl shadow-md text-sm">追加保存</button>
           </div>
         </form>
@@ -487,8 +382,8 @@
           <input type="number" id="targetCalInput" value="2000" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-base font-bold text-slate-800">
         </div>
         <div class="flex gap-2">
-          <button onclick="closeGoalCalModal()" class="flex-1 bg-slate-100 text-slate-600 font-bold py-2 rounded-lg text-sm">キャンセル</button>
-          <button onclick="saveTargetCalorie()" class="flex-1 bg-sky-500 text-white font-bold py-2 rounded-lg text-sm shadow">保存</button>
+          <button onclick="window.closeGoalCalModal()" class="flex-1 bg-slate-100 text-slate-600 font-bold py-2 rounded-lg text-sm">キャンセル</button>
+          <button onclick="window.saveTargetCalorie()" class="flex-1 bg-sky-500 text-white font-bold py-2 rounded-lg text-sm shadow">保存</button>
         </div>
       </div>
     </div>
@@ -501,8 +396,8 @@
           <input type="number" step="0.1" id="targetWeightInput" value="53.0" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-base font-bold text-slate-800">
         </div>
         <div class="flex gap-2">
-          <button onclick="closeWeightGoalModal()" class="flex-1 bg-slate-100 text-slate-600 font-bold py-2 rounded-lg text-sm">キャンセル</button>
-          <button onclick="saveTargetWeight()" class="flex-1 bg-indigo-500 text-white font-bold py-2 rounded-lg text-sm shadow">保存</button>
+          <button onclick="window.closeWeightGoalModal()" class="flex-1 bg-slate-100 text-slate-600 font-bold py-2 rounded-lg text-sm">キャンセル</button>
+          <button onclick="window.saveTargetWeight()" class="flex-1 bg-indigo-500 text-white font-bold py-2 rounded-lg text-sm shadow">保存</button>
         </div>
       </div>
     </div>
@@ -515,332 +410,43 @@
         </h3>
         <div>
           <label class="text-xs text-slate-500 block mb-1">あなたのコード (タップでコピー)</label>
-          <div onclick="copyMyCode()" class="bg-slate-100 p-2.5 rounded-lg text-center font-mono font-bold text-slate-700 cursor-pointer hover:bg-slate-200 transition" id="myPairCode">取得中...</div>
+          <div onclick="window.copyMyCode()" class="bg-slate-100 p-2.5 rounded-lg text-center font-mono font-bold text-slate-700 cursor-pointer hover:bg-slate-200 transition" id="myPairCode">取得中...</div>
         </div>
         <div>
           <label class="text-xs text-slate-500 block mb-1">相手のコードを入力</label>
           <input type="text" id="partnerCodeInput" placeholder="相手のコードを貼り付け" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-center font-mono font-bold">
         </div>
         <div class="flex gap-2">
-          <button onclick="togglePairModal()" class="flex-1 bg-slate-100 text-slate-600 font-bold py-2 rounded-lg text-xs">閉じる</button>
-          <button onclick="savePartnerCode()" class="flex-1 bg-sky-500 text-white font-bold py-2 rounded-lg text-xs shadow">接続する</button>
+          <button onclick="window.togglePairModal()" class="flex-1 bg-slate-100 text-slate-600 font-bold py-2 rounded-lg text-xs">閉じる</button>
+          <button onclick="window.savePartnerCode()" class="flex-1 bg-sky-500 text-white font-bold py-2 rounded-lg text-xs shadow">接続する</button>
         </div>
       </div>
     </div>
 
   </div>
 
-  <!-- FIREBASE INTEGRATION -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-    import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+  <!-- ICON GENERATION SCRIPT -->
+  <script>
+    try {
+      const canvas = document.createElement('canvas');
+      canvas.width = 512;
+      canvas.height = 512;
+      const ctx = canvas.getContext('2d');
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyB7hJtfhYoanPRVXO4uO8DATIJoaEohofE",
-      authDomain: "healthcheck-31474.firebaseapp.com",
-      projectId: "healthcheck-31474",
-      storageBucket: "healthcheck-31474.firebasestorage.app",
-      messagingSenderId: "125881795579",
-      appId: "1:125881795579:web:5c965fd71be523fa75c15e",
-      measurementId: "G-NDKR4QLJVJ"
-    };
+      const bgGrad = ctx.createLinearGradient(0, 0, 512, 512);
+      bgGrad.addColorStop(0, '#FAF7F2');
+      bgGrad.addColorStop(1, '#F3EDE4');
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, 512, 512);
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const auth = getAuth(app);
+      const pad = 32;
+      const w = 512 - pad * 2;
+      const r = 96;
 
-    let currentUserId = null;
-    let partnerId = localStorage.getItem('myhealth_partnerId') || null;
-    let viewUser = 'me';
-
-    let selectedDate = new Date().toISOString().split('T')[0];
-
-    let mySettings = JSON.parse(localStorage.getItem('myhealth_settings')) || { goalCal: 2000, targetWeight: 53.0, prevSmokeAvg: 15 };
-    let myLogs = JSON.parse(localStorage.getItem('myhealth_logs')) || {};
-
-    let partnerSettings = { goalCal: 2000, targetWeight: 53.0, prevSmokeAvg: 15 };
-    let partnerLogs = {};
-
-    signInAnonymously(auth).catch(err => console.error("Firebase Auth Error:", err));
-
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        currentUserId = user.uid;
-        document.getElementById('myPairCode').textContent = currentUserId;
-
-        onSnapshot(doc(db, "health_users", currentUserId), (docSnap) => {
-          if (docSnap.exists()) {
-            const remoteData = docSnap.data();
-            mySettings = remoteData.settings || mySettings;
-            myLogs = remoteData.logs || myLogs;
-            saveLocalState();
-            if (viewUser === 'me') renderAll();
-          } else {
-            pushToFirebase();
-          }
-        });
-
-        if (partnerId) {
-          document.getElementById('partnerCodeInput').value = partnerId;
-          document.getElementById('pairStatusDot').className = "absolute top-0 right-0 w-3 h-3 bg-emerald-400 border-2 border-white rounded-full";
-          listenPartnerData();
-        }
-      }
-    });
-
-    function listenPartnerData() {
-      if (!partnerId) return;
-      onSnapshot(doc(db, "health_users", partnerId), (docSnap) => {
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          partnerSettings = data.settings || partnerSettings;
-          partnerLogs = data.logs || partnerLogs;
-          if (viewUser === 'partner') renderAll();
-        }
-      });
-    }
-
-    function pushToFirebase() {
-      if (!currentUserId) return;
-      setDoc(doc(db, "health_users", currentUserId), {
-        settings: mySettings,
-        logs: myLogs,
-        updatedAt: new Date().toISOString()
-      }, { merge: true });
-    }
-
-    function saveLocalState() {
-      localStorage.setItem('myhealth_settings', JSON.stringify(mySettings));
-      localStorage.setItem('myhealth_logs', JSON.stringify(myLogs));
-    }
-
-    window.initDateLog = function(dateKey, logsObj) {
-      if (!logsObj[dateKey]) {
-        logsObj[dateKey] = { meals: [], weight: null, fat: null, sleep: null, smoked: 0 };
-      }
-    };
-
-    window.renderAll = function() {
-      const activeSettings = viewUser === 'me' ? mySettings : partnerSettings;
-      const activeLogs = viewUser === 'me' ? myLogs : partnerLogs;
-
-      initDateLog(selectedDate, activeLogs);
-      const currentLog = activeLogs[selectedDate];
-
-      const mealTypes = ['breakfast', 'lunch', 'dinner', 'snack'];
-      let totalIntakeCal = 0;
-
-      mealTypes.forEach(type => {
-        const listEl = document.getElementById(`${type}List`);
-        const totalEl = document.getElementById(`${type}Total`);
-        const filtered = (currentLog.meals || []).filter(m => m.type === type);
-        const subTotal = filtered.reduce((sum, item) => sum + item.cal, 0);
-
-        totalIntakeCal += subTotal;
-        totalEl.textContent = `${subTotal} kcal`;
-
-        if (filtered.length === 0) {
-          listEl.innerHTML = `<p class="text-slate-300 text-xs italic py-0.5">記録なし</p>`;
-        } else {
-          listEl.innerHTML = filtered.map(item => `
-            <div class="flex justify-between items-center py-1 border-b border-slate-50 last:border-none">
-              <span class="text-slate-700 font-medium text-xs">${escapeHtml(item.name)}</span>
-              <div class="flex items-center gap-2">
-                <span class="font-bold text-slate-800 text-xs">${item.cal} <span class="text-[10px] text-slate-400 font-normal">kcal</span></span>
-                ${viewUser === 'me' ? `<button onclick="deleteMeal(${item.id})" class="text-slate-300 hover:text-rose-500 text-xs"><i class="fa-solid fa-trash-can"></i></button>` : ''}
-              </div>
-            </div>
-          `).join('');
-        }
-      });
-
-      const remainingCal = activeSettings.goalCal - totalIntakeCal;
-      document.getElementById('dashIntakeCal').textContent = totalIntakeCal.toLocaleString();
-      document.getElementById('dashGoalCal').textContent = activeSettings.goalCal.toLocaleString();
-      document.getElementById('dashRemainingCal').textContent = `${Math.abs(remainingCal).toLocaleString()} kcal`;
-      document.getElementById('dashCalDiffLabel').textContent = remainingCal >= 0 ? '残り' : 'オーバー';
-      document.getElementById('dashCalProgress').style.width = `${Math.min((totalIntakeCal / activeSettings.goalCal) * 100, 100)}%`;
-
-      document.getElementById('mealTargetVal').textContent = activeSettings.goalCal.toLocaleString();
-      document.getElementById('mealCurrentVal').textContent = totalIntakeCal.toLocaleString();
-      document.getElementById('mealDiffVal').textContent = Math.abs(remainingCal).toLocaleString();
-      document.getElementById('mealDiffLabel').textContent = remainingCal >= 0 ? '残り' : 'オーバー';
-      document.getElementById('targetCalInput').value = activeSettings.goalCal;
-
-      const weight = currentLog.weight;
-      const targetWeight = activeSettings.targetWeight || 53.0;
-      document.getElementById('dashWeight').textContent = weight !== null ? weight : '-';
-      document.getElementById('dashTargetWeight').textContent = targetWeight;
-      document.getElementById('targetWeightInput').value = targetWeight;
-
-      if (weight !== null) {
-        const diffWeight = (weight - targetWeight).toFixed(1);
-        document.getElementById('dashWeightDiff').textContent = diffWeight > 0 ? `-${diffWeight}` : `+${Math.abs(diffWeight)}`;
-        document.getElementById('inputWeight').value = weight;
-      } else {
-        document.getElementById('dashWeightDiff').textContent = '-';
-        document.getElementById('inputWeight').value = '';
-      }
-
-      document.getElementById('dashFat').textContent = currentLog.fat !== null ? currentLog.fat : '-';
-      document.getElementById('inputFat').value = currentLog.fat !== null ? currentLog.fat : '';
-
-      document.getElementById('dashSleep').textContent = currentLog.sleep !== null ? currentLog.sleep : '-';
-      document.getElementById('inputSleep').value = currentLog.sleep !== null ? currentLog.sleep : '';
-
-      const todaySmoked = currentLog.smoked || 0;
-      document.getElementById('dashTodaySmoke').textContent = todaySmoked;
-      document.getElementById('todaySmokeCount').textContent = todaySmoked;
-      document.getElementById('prevSmokeAvg').value = activeSettings.prevSmokeAvg;
-
-      let totalReducedCigs = 0;
-      Object.keys(activeLogs).forEach(dateKey => {
-        const log = activeLogs[dateKey];
-        const prevAvg = activeSettings.prevSmokeAvg || 15;
-        const reduced = Math.max(0, prevAvg - (log.smoked || 0));
-        totalReducedCigs += reduced;
-      });
-
-      const packsSaved = Math.floor(totalReducedCigs / 20);
-      const totalSavingsYen = packsSaved * 640;
-
-      document.getElementById('dashSavings').textContent = `¥${totalSavingsYen.toLocaleString()}`;
-      document.getElementById('smokeTotalSavings').textContent = `¥${totalSavingsYen.toLocaleString()}`;
-      document.getElementById('dashReducedCigs').textContent = totalReducedCigs;
-      document.getElementById('smokeTotalReduced').textContent = totalReducedCigs;
-    };
-
-    window.switchViewUser = function(target) {
-      viewUser = target;
-      const meBtn = document.getElementById('viewMeBtn');
-      const partnerBtn = document.getElementById('viewPartnerBtn');
-      const partnerBanner = document.getElementById('partnerBanner');
-      const editBtns = document.querySelectorAll('.edit-only');
-
-      if (target === 'me') {
-        meBtn.className = "flex-1 py-1.5 rounded-lg bg-white text-sky-600 shadow font-bold";
-        partnerBtn.className = "flex-1 py-1.5 rounded-lg text-white/80 hover:text-white font-bold";
-        partnerBanner.classList.add('hidden');
-        editBtns.forEach(el => el.classList.remove('hidden'));
-      } else {
-        partnerBtn.className = "flex-1 py-1.5 rounded-lg bg-white text-pink-600 shadow font-bold";
-        meBtn.className = "flex-1 py-1.5 rounded-lg text-white/80 hover:text-white font-bold";
-        partnerBanner.classList.remove('hidden');
-        editBtns.forEach(el => el.classList.add('hidden'));
-      }
-      renderAll();
-    };
-
-    window.saveStateAndSync = function() {
-      saveLocalState();
-      pushToFirebase();
-      renderAll();
-    };
-
-    window.handleAddMeal = function(e) {
-      e.preventDefault();
-      if (viewUser !== 'me') return;
-      const type = document.getElementById('mealTypeSelect').value;
-      const name = document.getElementById('mealNameInput').value.trim();
-      const cal = parseInt(document.getElementById('mealCalInput').value, 10);
-
-      if (name && !isNaN(cal)) {
-        initDateLog(selectedDate, myLogs);
-        myLogs[selectedDate].meals.push({ id: Date.now(), type, name, cal });
-        saveStateAndSync();
-        closeMealModal();
-        document.getElementById('mealNameInput').value = '';
-        document.getElementById('mealCalInput').value = '';
-      }
-    };
-
-    window.deleteMeal = function(id) {
-      if (viewUser !== 'me') return;
-      myLogs[selectedDate].meals = myLogs[selectedDate].meals.filter(m => m.id !== id);
-      saveStateAndSync();
-    };
-
-    window.handleBodySubmit = function(e) {
-      e.preventDefault();
-      if (viewUser !== 'me') return;
-      const w = parseFloat(document.getElementById('inputWeight').value);
-      const f = parseFloat(document.getElementById('inputFat').value);
-
-      initDateLog(selectedDate, myLogs);
-      if (!isNaN(w)) myLogs[selectedDate].weight = w;
-      if (!isNaN(f)) myLogs[selectedDate].fat = f;
-
-      saveStateAndSync();
-      alert('身体データを保存しました！');
-    };
-
-    window.handleSleepSubmit = function(e) {
-      e.preventDefault();
-      if (viewUser !== 'me') return;
-      const s = parseFloat(document.getElementById('inputSleep').value);
-
-      initDateLog(selectedDate, myLogs);
-      if (!isNaN(s)) myLogs[selectedDate].sleep = s;
-
-      saveStateAndSync();
-      alert('睡眠データを記録しました！');
-    };
-
-    window.changeSmokeCount = function(delta) {
-      if (viewUser !== 'me') return;
-      initDateLog(selectedDate, myLogs);
-      let current = myLogs[selectedDate].smoked || 0;
-      myLogs[selectedDate].smoked = Math.max(0, current + delta);
-      saveStateAndSync();
-    };
-
-    window.updatePrevSmokeAvg = function(val) {
-      if (viewUser !== 'me') return;
-      const num = parseInt(val, 10);
-      if (!isNaN(num) && num >= 0) {
-        mySettings.prevSmokeAvg = num;
-        saveStateAndSync();
-      }
-    };
-
-    window.saveTargetCalorie = function() {
-      if (viewUser !== 'me') return;
-      const val = parseInt(document.getElementById('targetCalInput').value, 10);
-      if (val && val > 0) {
-        mySettings.goalCal = val;
-        saveStateAndSync();
-        closeGoalCalModal();
-      }
-    };
-
-    window.saveTargetWeight = function() {
-      if (viewUser !== 'me') return;
-      const val = parseFloat(document.getElementById('targetWeightInput').value);
-      if (val && val > 0) {
-        mySettings.targetWeight = val;
-        saveStateAndSync();
-        closeWeightGoalModal();
-      }
-    };
-
-    window.savePartnerCode = function() {
-      const code = document.getElementById('partnerCodeInput').value.trim();
-      if (code) {
-        partnerId = code;
-        localStorage.setItem('myhealth_partnerId', code);
-        listenPartnerData();
-        togglePairModal();
-        alert('パートナーを接続しました！');
-      }
-    };
-
-    window.copyMyCode = function() {
-      if (currentUserId) {
-        navigator.clipboard.writeText(currentUserId);
-        alert('あなたのIDコードをコピーしました！相手に送信してください。');
-      }
-    };
-
-    window.changeDate = function(newDate) {
-      if (!newDate
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(pad + r, pad);
+      ctx.arcTo(pad + w, pad, pad + w, pad + w, r);
+      ctx.arcTo(pad + w, pad + w, pad, pad + w, r);
+      ctx.arcTo(pad, pad + w, pad, pad, r);
+      ctx.arcTo(pad, pad, pad + w, pad, r);
