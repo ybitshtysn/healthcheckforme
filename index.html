@@ -137,14 +137,14 @@
           </div>
         </div>
 
-        <!-- 2. 喫煙・節約 -->
+        <!-- 2. 喫煙・コスト管理 -->
         <div class="puffy-card-pink rounded-3xl p-5 relative overflow-hidden">
           <div class="flex justify-between items-center mb-4">
             <div class="flex items-center gap-2">
               <div class="w-7 h-7 rounded-xl bg-pink-500 text-white flex items-center justify-center text-xs shadow-sm">
                 <i class="fa-solid fa-smoking"></i>
               </div>
-              <h2 class="text-base font-black text-slate-800">喫煙・節約メーター</h2>
+              <h2 class="text-base font-black text-slate-800">喫煙・コスト管理</h2>
             </div>
           </div>
 
@@ -166,8 +166,8 @@
                 </div>
               </div>
               <div class="mt-2 text-left w-full space-y-0.5 text-[10px] bg-white/60 p-2 rounded-xl">
-                <div class="flex justify-between"><span class="text-slate-400">月間予想:</span><span class="font-bold text-slate-700"><span id="mePacksMonth">23</span>箱 (<span id="meCostMonth">¥14,720</span>)</span></div>
-                <div class="flex justify-between"><span class="text-slate-400">今月節約:</span><span class="font-bold text-pink-600" id="meMonthSavings">¥0</span></div>
+                <div class="flex justify-between"><span class="text-slate-400">今月累計:</span><span class="font-bold text-slate-700"><span id="meMonthTotalCigs">0</span>本 (<span id="meMonthCost">¥0</span>)</span></div>
+                <div class="flex justify-between"><span class="text-slate-400" id="meDiffLabel">予算まで:</span><span class="font-bold text-pink-600" id="meBudgetDiff">¥7,680</span></div>
               </div>
             </div>
 
@@ -188,14 +188,14 @@
                 </div>
               </div>
               <div class="mt-2 text-left w-full space-y-0.5 text-[10px] bg-white/60 p-2 rounded-xl">
-                <div class="flex justify-between"><span class="text-slate-400">月間予想:</span><span class="font-bold text-slate-700"><span id="partnerPacksMonth">23</span>箱 (<span id="partnerCostMonth">¥14,720</span>)</span></div>
-                <div class="flex justify-between"><span class="text-slate-400">今月節約:</span><span class="font-bold text-pink-600" id="partnerMonthSavings">¥0</span></div>
+                <div class="flex justify-between"><span class="text-slate-400">今月累計:</span><span class="font-bold text-slate-700"><span id="partnerMonthTotalCigs">0</span>本 (<span id="partnerMonthCost">¥0</span>)</span></div>
+                <div class="flex justify-between"><span class="text-slate-400" id="partnerDiffLabel">予算まで:</span><span class="font-bold text-pink-600" id="partnerBudgetDiff">¥7,680</span></div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- 3. 体重 (縦並び・あと〇〇kg修正版) -->
+        <!-- 3. 体重 -->
         <div class="puffy-card rounded-3xl p-4 space-y-3">
           <div class="flex justify-between items-center">
             <h3 class="text-xs font-black text-slate-600 flex items-center gap-1.5">
@@ -229,7 +229,7 @@
           </div>
         </div>
 
-        <!-- 4. 睡眠 (縦並び) -->
+        <!-- 4. 睡眠 -->
         <div class="puffy-card rounded-3xl p-4 space-y-3">
           <h3 class="text-xs font-black text-slate-600 flex items-center gap-1.5">
             <i class="fa-solid fa-moon text-indigo-500"></i> 睡眠記録
@@ -629,22 +629,18 @@
       ring.style.strokeDashoffset = offset;
     }
 
-    function calculateMonthlySavings(logsObj, settingsObj, targetDateStr) {
+    // 今月の累積喫煙本数を計算する関数
+    function calculateMonthlySmoking(logsObj, settingsObj, targetDateStr) {
       const [year, month] = targetDateStr.split('-').map(Number);
       const targetDay = parseInt(targetDateStr.split('-')[2], 10);
-      const avg = settingsObj.prevSmokeAvg || 15;
       
-      let totalSavedYen = 0;
-      
+      let totalCigs = 0;
       for (let day = 1; day <= targetDay; day++) {
         const dateKey = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
         const dayLog = logsObj[dateKey] || { smoked: 0 };
-        const smokedToday = dayLog.smoked || 0;
-        const savedCigs = Math.max(0, avg - smokedToday);
-        const daySavings = Math.floor((savedCigs / 20) * 640);
-        totalSavedYen += daySavings;
+        totalCigs += (dayLog.smoked || 0);
       }
-      return totalSavedYen;
+      return totalCigs;
     }
 
     window.renderAll = function() {
@@ -698,25 +694,38 @@
       document.getElementById('partnerCalDiffLabel').textContent = partnerRemCal >= 0 ? `残り ${partnerRemCal.toLocaleString()} kcal` : `オーバー ${Math.abs(partnerRemCal).toLocaleString()} kcal`;
       updateRing('partnerCalRing', (partnerTotalCal / (partnerSettings.goalCal || 2000)) * 100);
 
-      // 2. 喫煙・節約計算
+      // 2. 喫煙・コスト管理の計算
       const renderSmoke = (prefix, logObj, settingsObj, logsFullObj) => {
         const avg = settingsObj.prevSmokeAvg || 15;
         const todaySmoked = logObj.smoked || 0;
         
-        const monthlyPacks = Math.ceil((avg * 30) / 20);
-        const monthlyCost = monthlyPacks * 640;
+        // 今月の累計本数とコスト
+        const monthCigs = calculateMonthlySmoking(logsFullObj, settingsObj, selectedDate);
+        const monthCost = Math.floor((monthCigs / 20) * 640);
         
-        const monthSavingsYen = calculateMonthlySavings(logsFullObj, settingsObj, selectedDate);
-        const todaySavedCigs = Math.max(0, avg - todaySmoked);
-        const savingsPercent = (todaySavedCigs / avg) * 100;
+        // 1ヶ月の予算（目安）：平均本数 × 30日分のコスト
+        const monthlyBudget = Math.floor(((avg * 30) / 20) * 640);
+        const budgetDiff = monthlyBudget - monthCost; // 予算までの残り金額
 
         document.getElementById(`${prefix}AvgSmoke`).textContent = avg;
         document.getElementById(`${prefix}TodaySmoke`).textContent = todaySmoked;
-        document.getElementById(`${prefix}PacksMonth`).textContent = monthlyPacks;
-        document.getElementById(`${prefix}CostMonth`).textContent = `¥${monthlyCost.toLocaleString()}`;
-        document.getElementById(`${prefix}MonthSavings`).textContent = `¥${monthSavingsYen.toLocaleString()}`;
+        document.getElementById(`${prefix}MonthTotalCigs`).textContent = monthCigs;
+        document.getElementById(`${prefix}MonthCost`).textContent = `¥${monthCost.toLocaleString()}`;
         
-        updateRing(`${prefix}SmokeRing`, savingsPercent);
+        const diffLabelEl = document.getElementById(`${prefix}DiffLabel`);
+        const budgetDiffEl = document.getElementById(`${prefix}BudgetDiff`);
+        
+        if (budgetDiff >= 0) {
+          diffLabelEl.textContent = "予算まで:";
+          budgetDiffEl.textContent = `¥${budgetDiff.toLocaleString()}`;
+        } else {
+          diffLabelEl.textContent = "予算オーバー:";
+          budgetDiffEl.textContent = `¥${Math.abs(budgetDiff).toLocaleString()}`;
+        }
+        
+        // メーター表示：本日の喫煙数が平均に対してどれくらいか（平均以下なら100%に近づく、超過すると減る）
+        const ratio = avg > 0 ? Math.max(0, (avg - todaySmoked) / avg) * 100 : 100;
+        updateRing(`${prefix}SmokeRing`, ratio);
       };
 
       renderSmoke('me', myLog, mySettings, myLogs);
@@ -724,7 +733,7 @@
       document.getElementById('todaySmokeCount').textContent = myLog.smoked || 0;
       document.getElementById('tabPrevSmokeAvgInput').value = mySettings.prevSmokeAvg || 15;
 
-      // 3. 体重表現 (正しく「あと 〇.〇 kg」または「目標達成！」を表示)
+      // 3. 体重表現
       const renderWeight = (prefix, weightVal, targetVal) => {
         document.getElementById(`${prefix}DashWeight`).textContent = weightVal !== null ? weightVal : '-';
         const box = document.getElementById(`${prefix}WeightDiffBox`);
