@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>My Health Log</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;700&display=swap');
@@ -39,6 +38,20 @@
             <i class="fa-solid font-bold fa-heart-pulse text-pink-300"></i> My Health Log
           </h1>
         </div>
+        <button onclick="togglePairModal()" class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition text-white border border-white/30 relative">
+          <i class="fa-solid fa-users"></i>
+          <span id="pairStatusDot" class="absolute top-0 right-0 w-3 h-3 bg-rose-400 border-2 border-white rounded-full"></span>
+        </button>
+      </div>
+
+      <!-- User Switcher Tab -->
+      <div class="flex bg-sky-600/30 p-1 rounded-xl mt-3 text-xs font-bold">
+        <button id="viewMeBtn" onclick="switchViewUser('me')" class="flex-1 py-1.5 rounded-lg bg-white text-sky-600 shadow">
+          自分
+        </button>
+        <button id="viewPartnerBtn" onclick="switchViewUser('partner')" class="flex-1 py-1.5 rounded-lg text-white/80 hover:text-white">
+          パートナー
+        </button>
       </div>
     </header>
 
@@ -48,9 +61,14 @@
       <!-- DASHBOARD TAB -->
       <section id="tab-dashboard" class="tab-content space-y-4">
         
+        <div id="partnerBanner" class="hidden bg-pink-50 border border-pink-200 text-pink-700 p-2.5 rounded-xl text-xs flex justify-between items-center">
+          <span><i class="fa-solid fa-eye mr-1"></i> パートナーのデータ表示中</span>
+          <span class="font-bold text-[10px] bg-pink-200 px-2 py-0.5 rounded-full">閲覧モード</span>
+        </div>
+
         <div class="flex justify-between items-center">
           <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider">本日の全項目サマリー</h2>
-          <span class="text-[10px] font-bold text-emerald-600 bg-emerald-100 px-2.5 py-0.5 rounded-full"><i class="fa-solid fa-floppy-disk mr-1"></i>保存済み</span>
+          <span id="syncBadge" class="text-[10px] font-bold text-emerald-600 bg-emerald-100 px-2.5 py-0.5 rounded-full"><i class="fa-solid fa-wifi mr-1"></i>同期中</span>
         </div>
 
         <!-- 1. 食事サマリー -->
@@ -59,7 +77,7 @@
             <span class="text-xs font-bold text-slate-500 flex items-center gap-1.5">
               <i class="fa-solid fa-utensils text-sky-400"></i> カロリー管理
             </span>
-            <button onclick="openGoalCalModal()" class="text-[10px] font-bold text-sky-600 bg-sky-50 hover:bg-sky-100 px-2 py-0.5 rounded border border-sky-200">
+            <button onclick="openGoalCalModal()" class="text-[10px] font-bold text-sky-600 bg-sky-50 hover:bg-sky-100 px-2 py-0.5 rounded border border-sky-200 edit-only">
               目標設定
             </button>
           </div>
@@ -84,7 +102,7 @@
             <span class="text-xs font-bold text-slate-500 flex items-center gap-1.5">
               <i class="fa-solid fa-weight-scale text-indigo-400"></i> 体重データ
             </span>
-            <button onclick="openWeightGoalModal()" class="text-[10px] font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-2 py-0.5 rounded border border-indigo-200">
+            <button onclick="openWeightGoalModal()" class="text-[10px] font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-2 py-0.5 rounded border border-indigo-200 edit-only">
               目標設定
             </button>
           </div>
@@ -161,7 +179,7 @@
               <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">食事管理</span>
               <h2 class="text-lg font-black text-slate-800">本日の食事バランス</h2>
             </div>
-            <button onclick="openGoalCalModal()" class="text-xs bg-sky-50 text-sky-600 border border-sky-200 px-2.5 py-1 rounded-lg font-bold hover:bg-sky-100">
+            <button onclick="openGoalCalModal()" class="text-xs bg-sky-50 text-sky-600 border border-sky-200 px-2.5 py-1 rounded-lg font-bold hover:bg-sky-100 edit-only">
               <i class="fa-solid fa-pen"></i> 目標変更
             </button>
           </div>
@@ -185,12 +203,11 @@
           </div>
         </div>
 
-        <button onclick="openMealModal()" class="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-2">
+        <button onclick="openMealModal()" class="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-2 edit-only">
           <i class="fa-solid fa-plus"></i> 食事を記録する
         </button>
 
         <div class="space-y-3">
-          <!-- 朝食 -->
           <div class="glass-card p-3.5 rounded-xl shadow-sm">
             <div class="flex justify-between items-center mb-2 pb-1 border-b border-slate-100">
               <span class="font-bold text-sm text-slate-700 flex items-center gap-1.5"><i class="fa-solid fa-sun text-amber-400"></i> 朝食</span>
@@ -199,7 +216,6 @@
             <div id="breakfastList" class="space-y-2 text-sm"></div>
           </div>
 
-          <!-- 昼食 -->
           <div class="glass-card p-3.5 rounded-xl shadow-sm">
             <div class="flex justify-between items-center mb-2 pb-1 border-b border-slate-100">
               <span class="font-bold text-sm text-slate-700 flex items-center gap-1.5"><i class="fa-solid fa-cloud-sun text-sky-400"></i> 昼食</span>
@@ -208,7 +224,6 @@
             <div id="lunchList" class="space-y-2 text-sm"></div>
           </div>
 
-          <!-- 夕食 -->
           <div class="glass-card p-3.5 rounded-xl shadow-sm">
             <div class="flex justify-between items-center mb-2 pb-1 border-b border-slate-100">
               <span class="font-bold text-sm text-slate-700 flex items-center gap-1.5"><i class="fa-solid fa-moon text-indigo-400"></i> 夕食</span>
@@ -217,7 +232,6 @@
             <div id="dinnerList" class="space-y-2 text-sm"></div>
           </div>
 
-          <!-- 間食 -->
           <div class="glass-card p-3.5 rounded-xl shadow-sm">
             <div class="flex justify-between items-center mb-2 pb-1 border-b border-slate-100">
               <span class="font-bold text-sm text-slate-700 flex items-center gap-1.5"><i class="fa-solid fa-cookie-bite text-pink-400"></i> 間食・その他</span>
@@ -235,7 +249,7 @@
             <h3 class="text-sm font-bold text-slate-700 flex items-center gap-2">
               <i class="fa-solid fa-weight-scale text-sky-500"></i> 体重・体脂肪率の入力
             </h3>
-            <button onclick="openWeightGoalModal()" class="text-xs bg-indigo-50 text-indigo-600 border border-indigo-200 px-2 py-1 rounded font-bold">
+            <button onclick="openWeightGoalModal()" class="text-xs bg-indigo-50 text-indigo-600 border border-indigo-200 px-2 py-1 rounded font-bold edit-only">
               目標設定
             </button>
           </div>
@@ -250,7 +264,7 @@
                 <input type="number" step="0.1" id="inputFat" placeholder="21.2" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-sm font-bold text-slate-800">
               </div>
             </div>
-            <button type="submit" class="w-full bg-sky-500 text-white font-bold py-2.5 rounded-xl hover:bg-sky-600 transition text-sm">
+            <button type="submit" class="w-full bg-sky-500 text-white font-bold py-2.5 rounded-xl hover:bg-sky-600 transition text-sm edit-only">
               身体データを更新
             </button>
           </form>
@@ -265,7 +279,7 @@
               <label class="text-xs font-semibold text-slate-500 block mb-1">睡眠時間 (時間)</label>
               <input type="number" step="0.5" id="inputSleep" placeholder="7.5" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-sm font-bold text-slate-800">
             </div>
-            <button type="submit" class="w-full bg-indigo-500 text-white font-bold py-2.5 rounded-xl hover:bg-indigo-600 transition text-sm">
+            <button type="submit" class="w-full bg-indigo-500 text-white font-bold py-2.5 rounded-xl hover:bg-indigo-600 transition text-sm edit-only">
               睡眠データを記録
             </button>
           </form>
@@ -283,7 +297,7 @@
         <div class="glass-card p-4 rounded-2xl shadow-sm text-center">
           <span class="text-xs font-bold text-slate-400 block mb-1">本日の喫煙数</span>
           <div class="text-4xl font-black text-slate-800 mb-3" id="todaySmokeCount">0</div>
-          <div class="flex justify-center gap-3">
+          <div class="flex justify-center gap-3 edit-only">
             <button onclick="changeSmokeCount(-1)" class="w-12 h-12 rounded-xl bg-slate-100 font-black text-xl text-slate-700 active:bg-slate-200">-</button>
             <button onclick="changeSmokeCount(1)" class="flex-1 bg-pink-500 text-white font-bold py-3 rounded-xl shadow active:bg-pink-600">+ 1本記録</button>
           </div>
@@ -320,7 +334,7 @@
       </button>
     </nav>
 
-    <!-- ADD MEAL MODAL -->
+    <!-- MODALS -->
     <div id="mealModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-end justify-center hidden">
       <div class="bg-white w-full max-w-md rounded-t-3xl p-5 space-y-4 shadow-2xl">
         <div class="flex justify-between items-center border-b border-slate-100 pb-2">
@@ -339,7 +353,7 @@
           </div>
           <div>
             <label class="text-xs font-semibold text-slate-500 block mb-1">メニュー名</label>
-            <input type="text" id="mealNameInput" placeholder="例：サラダ、和風パスタ" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-sm text-slate-800">
+            <input type="text" id="mealNameInput" placeholder="例：サラダ" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-sm text-slate-800">
           </div>
           <div>
             <label class="text-xs font-semibold text-slate-500 block mb-1">カロリー (kcal)</label>
@@ -353,7 +367,6 @@
       </div>
     </div>
 
-    <!-- TARGET CALORIE MODAL -->
     <div id="goalCalModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
       <div class="bg-white w-full max-w-xs rounded-2xl p-5 space-y-4 shadow-2xl">
         <h3 class="text-base font-bold text-slate-800">目標カロリー設定</h3>
@@ -368,7 +381,6 @@
       </div>
     </div>
 
-    <!-- TARGET WEIGHT MODAL -->
     <div id="targetWeightModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
       <div class="bg-white w-full max-w-xs rounded-2xl p-5 space-y-4 shadow-2xl">
         <h3 class="text-base font-bold text-slate-800">目標体重設定</h3>
@@ -383,64 +395,130 @@
       </div>
     </div>
 
+    <!-- PAIRING MODAL -->
+    <div id="pairModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+      <div class="bg-white w-full max-w-xs rounded-2xl p-5 space-y-4 shadow-2xl">
+        <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+          <i class="fa-solid fa-users text-sky-500"></i> パートナー共有設定
+        </h3>
+        <div>
+          <label class="text-xs text-slate-500 block mb-1">あなたのコード (タップでコピー)</label>
+          <div onclick="copyMyCode()" class="bg-slate-100 p-2.5 rounded-lg text-center font-mono font-bold text-slate-700 cursor-pointer hover:bg-slate-200 transition" id="myPairCode">取得中...</div>
+        </div>
+        <div>
+          <label class="text-xs text-slate-500 block mb-1">相手のコードを入力</label>
+          <input type="text" id="partnerCodeInput" placeholder="相手のコードを貼り付け" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-center font-mono font-bold">
+        </div>
+        <div class="flex gap-2">
+          <button onclick="togglePairModal()" class="flex-1 bg-slate-100 text-slate-600 font-bold py-2 rounded-lg text-xs">閉じる</button>
+          <button onclick="savePartnerCode()" class="flex-1 bg-sky-500 text-white font-bold py-2 rounded-lg text-xs shadow">接続する</button>
+        </div>
+      </div>
+    </div>
+
   </div>
 
-  <script>
-    // 今日をデフォルトの日付とする
-    let selectedDate = new Date().toISOString().split('T')[0];
+  <!-- FIREBASE INTEGRATION -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-    // ローカルストレージ管理構造
-    let settings = JSON.parse(localStorage.getItem('myhealth_settings')) || {
-      goalCal: 2000,
-      targetWeight: 53.0,
-      prevSmokeAvg: 15
+    const firebaseConfig = {
+      apiKey: "AIzaSyB7hJtfhYoanPRVXO4uO8DATIJoaEohofE",
+      authDomain: "healthcheck-31474.firebaseapp.com",
+      projectId: "healthcheck-31474",
+      storageBucket: "healthcheck-31474.firebasestorage.app",
+      messagingSenderId: "125881795579",
+      appId: "1:125881795579:web:5c965fd71be523fa75c15e",
+      measurementId: "G-NDKR4QLJVJ"
     };
 
-    let logs = JSON.parse(localStorage.getItem('myhealth_logs')) || {};
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
 
-    window.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('datePicker').value = selectedDate;
-      updateHeaderDateDisplay();
-      initDateLog(selectedDate);
-      renderAll();
+    let currentUserId = null;
+    let partnerId = localStorage.getItem('myhealth_partnerId') || null;
+    let viewUser = 'me'; // 'me' or 'partner'
+
+    let selectedDate = new Date().toISOString().split('T')[0];
+
+    // ローカル＆リモートデータ構造
+    let mySettings = JSON.parse(localStorage.getItem('myhealth_settings')) || { goalCal: 2000, targetWeight: 53.0, prevSmokeAvg: 15 };
+    let myLogs = JSON.parse(localStorage.getItem('myhealth_logs')) || {};
+
+    let partnerSettings = { goalCal: 2000, targetWeight: 53.0, prevSmokeAvg: 15 };
+    let partnerLogs = {};
+
+    signInAnonymously(auth).catch(err => console.error("Firebase Auth Error:", err));
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        currentUserId = user.uid;
+        document.getElementById('myPairCode').textContent = currentUserId;
+
+        // 自分のデータリアルタイム同期
+        onSnapshot(doc(db, "health_users", currentUserId), (docSnap) => {
+          if (docSnap.exists()) {
+            const remoteData = docSnap.data();
+            mySettings = remoteData.settings || mySettings;
+            myLogs = remoteData.logs || myLogs;
+            saveLocalState();
+            if (viewUser === 'me') renderAll();
+          } else {
+            pushToFirebase();
+          }
+        });
+
+        if (partnerId) {
+          document.getElementById('partnerCodeInput').value = partnerId;
+          document.getElementById('pairStatusDot').className = "absolute top-0 right-0 w-3 h-3 bg-emerald-400 border-2 border-white rounded-full";
+          listenPartnerData();
+        }
+      }
     });
 
-    function initDateLog(dateKey) {
-      if (!logs[dateKey]) {
-        logs[dateKey] = {
-          meals: [],
-          weight: null,
-          fat: null,
-          sleep: null,
-          smoked: 0
-        };
+    function listenPartnerData() {
+      if (!partnerId) return;
+      onSnapshot(doc(db, "health_users", partnerId), (docSnap) => {
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          partnerSettings = data.settings || partnerSettings;
+          partnerLogs = data.logs || partnerLogs;
+          if (viewUser === 'partner') renderAll();
+        }
+      });
+    }
+
+    function pushToFirebase() {
+      if (!currentUserId) return;
+      setDoc(doc(db, "health_users", currentUserId), {
+        settings: mySettings,
+        logs: myLogs,
+        updatedAt: new Date().toISOString()
+      }, { merge: true });
+    }
+
+    function saveLocalState() {
+      localStorage.setItem('myhealth_settings', JSON.stringify(mySettings));
+      localStorage.setItem('myhealth_logs', JSON.stringify(myLogs));
+    }
+
+    window.initDateLog = function(dateKey, logsObj) {
+      if (!logsObj[dateKey]) {
+        logsObj[dateKey] = { meals: [], weight: null, fat: null, sleep: null, smoked: 0 };
       }
-    }
+    };
 
-    function saveToLocalStorage() {
-      localStorage.setItem('myhealth_settings', JSON.stringify(settings));
-      localStorage.setItem('myhealth_logs', JSON.stringify(logs));
-    }
+    window.renderAll = function() {
+      const activeSettings = viewUser === 'me' ? mySettings : partnerSettings;
+      const activeLogs = viewUser === 'me' ? myLogs : partnerLogs;
 
-    function changeDate(newDate) {
-      if (!newDate) return;
-      selectedDate = newDate;
-      updateHeaderDateDisplay();
-      initDateLog(selectedDate);
-      renderAll();
-    }
+      initDateLog(selectedDate, activeLogs);
+      const currentLog = activeLogs[selectedDate];
 
-    function updateHeaderDateDisplay() {
-      const d = new Date(selectedDate);
-      const days = ['Sun.', 'Mon.', 'Tue.', 'Wed.', 'Thu.', 'Fri.', 'Sat.'];
-      const formattedStr = `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')} ${days[d.getDay()]}`;
-      document.getElementById('headerDateDisplay').textContent = formattedStr;
-    }
-
-    function renderAll() {
-      const currentLog = logs[selectedDate] || { meals: [], weight: null, fat: null, sleep: null, smoked: 0 };
-
-      // 食事一覧描画 & カロリー集計
+      // 食事
       const mealTypes = ['breakfast', 'lunch', 'dinner', 'snack'];
       let totalIntakeCal = 0;
 
@@ -461,32 +539,29 @@
               <span class="text-slate-700 font-medium text-xs">${escapeHtml(item.name)}</span>
               <div class="flex items-center gap-2">
                 <span class="font-bold text-slate-800 text-xs">${item.cal} <span class="text-[10px] text-slate-400 font-normal">kcal</span></span>
-                <button onclick="deleteMeal(${item.id})" class="text-slate-300 hover:text-rose-500 text-xs">
-                  <i class="fa-solid fa-trash-can"></i>
-                </button>
+                ${viewUser === 'me' ? `<button onclick="deleteMeal(${item.id})" class="text-slate-300 hover:text-rose-500 text-xs"><i class="fa-solid fa-trash-can"></i></button>` : ''}
               </div>
             </div>
           `).join('');
         }
       });
 
-      // カロリー差分
-      const remainingCal = settings.goalCal - totalIntakeCal;
+      const remainingCal = activeSettings.goalCal - totalIntakeCal;
       document.getElementById('dashIntakeCal').textContent = totalIntakeCal.toLocaleString();
-      document.getElementById('dashGoalCal').textContent = settings.goalCal.toLocaleString();
+      document.getElementById('dashGoalCal').textContent = activeSettings.goalCal.toLocaleString();
       document.getElementById('dashRemainingCal').textContent = `${Math.abs(remainingCal).toLocaleString()} kcal`;
       document.getElementById('dashCalDiffLabel').textContent = remainingCal >= 0 ? '残り' : 'オーバー';
-      document.getElementById('dashCalProgress').style.width = `${Math.min((totalIntakeCal / settings.goalCal) * 100, 100)}%`;
+      document.getElementById('dashCalProgress').style.width = `${Math.min((totalIntakeCal / activeSettings.goalCal) * 100, 100)}%`;
 
-      document.getElementById('mealTargetVal').textContent = settings.goalCal.toLocaleString();
+      document.getElementById('mealTargetVal').textContent = activeSettings.goalCal.toLocaleString();
       document.getElementById('mealCurrentVal').textContent = totalIntakeCal.toLocaleString();
       document.getElementById('mealDiffVal').textContent = Math.abs(remainingCal).toLocaleString();
       document.getElementById('mealDiffLabel').textContent = remainingCal >= 0 ? '残り' : 'オーバー';
-      document.getElementById('targetCalInput').value = settings.goalCal;
+      document.getElementById('targetCalInput').value = activeSettings.goalCal;
 
-      // 体重・体脂肪率
+      // 体重
       const weight = currentLog.weight;
-      const targetWeight = settings.targetWeight || 53.0;
+      const targetWeight = activeSettings.targetWeight || 53.0;
       document.getElementById('dashWeight').textContent = weight !== null ? weight : '-';
       document.getElementById('dashTargetWeight').textContent = targetWeight;
       document.getElementById('targetWeightInput').value = targetWeight;
@@ -507,17 +582,16 @@
       document.getElementById('dashSleep').textContent = currentLog.sleep !== null ? currentLog.sleep : '-';
       document.getElementById('inputSleep').value = currentLog.sleep !== null ? currentLog.sleep : '';
 
-      // 喫煙・節約
+      // 喫煙
       const todaySmoked = currentLog.smoked || 0;
       document.getElementById('dashTodaySmoke').textContent = todaySmoked;
       document.getElementById('todaySmokeCount').textContent = todaySmoked;
-      document.getElementById('prevSmokeAvg').value = settings.prevSmokeAvg;
+      document.getElementById('prevSmokeAvg').value = activeSettings.prevSmokeAvg;
 
-      // 通算削減本数と節約金額（20本削減＝640円）
       let totalReducedCigs = 0;
-      Object.keys(logs).forEach(dateKey => {
-        const log = logs[dateKey];
-        const prevAvg = settings.prevSmokeAvg || 15;
+      Object.keys(activeLogs).forEach(dateKey => {
+        const log = activeLogs[dateKey];
+        const prevAvg = activeSettings.prevSmokeAvg || 15;
         const reduced = Math.max(0, prevAvg - (log.smoked || 0));
         totalReducedCigs += reduced;
       });
@@ -529,110 +603,159 @@
       document.getElementById('smokeTotalSavings').textContent = `¥${totalSavingsYen.toLocaleString()}`;
       document.getElementById('dashReducedCigs').textContent = totalReducedCigs;
       document.getElementById('smokeTotalReduced').textContent = totalReducedCigs;
-    }
+    };
 
-    // 食事登録・削除
-    function handleAddMeal(e) {
+    window.switchViewUser = function(target) {
+      viewUser = target;
+      const meBtn = document.getElementById('viewMeBtn');
+      const partnerBtn = document.getElementById('viewPartnerBtn');
+      const partnerBanner = document.getElementById('partnerBanner');
+      const editBtns = document.querySelectorAll('.edit-only');
+
+      if (target === 'me') {
+        meBtn.className = "flex-1 py-1.5 rounded-lg bg-white text-sky-600 shadow font-bold";
+        partnerBtn.className = "flex-1 py-1.5 rounded-lg text-white/80 hover:text-white font-bold";
+        partnerBanner.classList.add('hidden');
+        editBtns.forEach(el => el.classList.remove('hidden'));
+      } else {
+        partnerBtn.className = "flex-1 py-1.5 rounded-lg bg-white text-pink-600 shadow font-bold";
+        meBtn.className = "flex-1 py-1.5 rounded-lg text-white/80 hover:text-white font-bold";
+        partnerBanner.classList.remove('hidden');
+        editBtns.forEach(el => el.classList.add('hidden'));
+      }
+      renderAll();
+    };
+
+    window.saveStateAndSync = function() {
+      saveLocalState();
+      pushToFirebase();
+      renderAll();
+    };
+
+    window.handleAddMeal = function(e) {
       e.preventDefault();
+      if (viewUser !== 'me') return;
       const type = document.getElementById('mealTypeSelect').value;
       const name = document.getElementById('mealNameInput').value.trim();
       const cal = parseInt(document.getElementById('mealCalInput').value, 10);
 
       if (name && !isNaN(cal)) {
-        logs[selectedDate].meals.push({
-          id: Date.now(),
-          type,
-          name,
-          cal
-        });
-        saveToLocalStorage();
-        renderAll();
+        initDateLog(selectedDate, myLogs);
+        myLogs[selectedDate].meals.push({ id: Date.now(), type, name, cal });
+        saveStateAndSync();
         closeMealModal();
         document.getElementById('mealNameInput').value = '';
         document.getElementById('mealCalInput').value = '';
       }
-    }
+    };
 
-    function deleteMeal(id) {
-      logs[selectedDate].meals = logs[selectedDate].meals.filter(m => m.id !== id);
-      saveToLocalStorage();
-      renderAll();
-    }
+    window.deleteMeal = function(id) {
+      if (viewUser !== 'me') return;
+      myLogs[selectedDate].meals = myLogs[selectedDate].meals.filter(m => m.id !== id);
+      saveStateAndSync();
+    };
 
-    // 身体・睡眠データ送信
-    function handleBodySubmit(e) {
+    window.handleBodySubmit = function(e) {
       e.preventDefault();
+      if (viewUser !== 'me') return;
       const w = parseFloat(document.getElementById('inputWeight').value);
       const f = parseFloat(document.getElementById('inputFat').value);
 
-      if (!isNaN(w)) logs[selectedDate].weight = w;
-      if (!isNaN(f)) logs[selectedDate].fat = f;
+      initDateLog(selectedDate, myLogs);
+      if (!isNaN(w)) myLogs[selectedDate].weight = w;
+      if (!isNaN(f)) myLogs[selectedDate].fat = f;
 
-      saveToLocalStorage();
-      renderAll();
+      saveStateAndSync();
       alert('身体データを保存しました！');
-    }
+    };
 
-    function handleSleepSubmit(e) {
+    window.handleSleepSubmit = function(e) {
       e.preventDefault();
+      if (viewUser !== 'me') return;
       const s = parseFloat(document.getElementById('inputSleep').value);
 
-      if (!isNaN(s)) logs[selectedDate].sleep = s;
+      initDateLog(selectedDate, myLogs);
+      if (!isNaN(s)) myLogs[selectedDate].sleep = s;
 
-      saveToLocalStorage();
-      renderAll();
+      saveStateAndSync();
       alert('睡眠データを保存しました！');
-    }
+    };
 
-    // 喫煙カウント
-    function changeSmokeCount(delta) {
-      let current = logs[selectedDate].smoked || 0;
-      logs[selectedDate].smoked = Math.max(0, current + delta);
-      saveToLocalStorage();
-      renderAll();
-    }
+    window.changeSmokeCount = function(delta) {
+      if (viewUser !== 'me') return;
+      initDateLog(selectedDate, myLogs);
+      let current = myLogs[selectedDate].smoked || 0;
+      myLogs[selectedDate].smoked = Math.max(0, current + delta);
+      saveStateAndSync();
+    };
 
-    function updatePrevSmokeAvg(val) {
+    window.updatePrevSmokeAvg = function(val) {
+      if (viewUser !== 'me') return;
       const num = parseInt(val, 10);
       if (!isNaN(num) && num >= 0) {
-        settings.prevSmokeAvg = num;
-        saveToLocalStorage();
-        renderAll();
+        mySettings.prevSmokeAvg = num;
+        saveStateAndSync();
       }
-    }
+    };
 
-    // モーダル操作
-    function openMealModal() { document.getElementById('mealModal').classList.remove('hidden'); }
-    function closeMealModal() { document.getElementById('mealModal').classList.add('hidden'); }
-    function openGoalCalModal() { document.getElementById('goalCalModal').classList.remove('hidden'); }
-    function closeGoalCalModal() { document.getElementById('goalCalModal').classList.add('hidden'); }
-    function openWeightGoalModal() { document.getElementById('targetWeightModal').classList.remove('hidden'); }
-    function closeWeightGoalModal() { document.getElementById('targetWeightModal').classList.add('hidden'); }
-
-    function saveTargetCalorie() {
+    window.saveTargetCalorie = function() {
+      if (viewUser !== 'me') return;
       const val = parseInt(document.getElementById('targetCalInput').value, 10);
       if (val && val > 0) {
-        settings.goalCal = val;
-        saveToLocalStorage();
-        renderAll();
+        mySettings.goalCal = val;
+        saveStateAndSync();
         closeGoalCalModal();
       }
-    }
+    };
 
-    function saveTargetWeight() {
+    window.saveTargetWeight = function() {
+      if (viewUser !== 'me') return;
       const val = parseFloat(document.getElementById('targetWeightInput').value);
       if (val && val > 0) {
-        settings.targetWeight = val;
-        saveToLocalStorage();
-        renderAll();
+        mySettings.targetWeight = val;
+        saveStateAndSync();
         closeWeightGoalModal();
       }
-    }
+    };
 
-    function switchTab(tabId) {
+    window.savePartnerCode = function() {
+      const code = document.getElementById('partnerCodeInput').value.trim();
+      if (code) {
+        partnerId = code;
+        localStorage.setItem('myhealth_partnerId', code);
+        listenPartnerData();
+        togglePairModal();
+        alert('パートナーを接続しました！');
+      }
+    };
+
+    window.copyMyCode = function() {
+      if (currentUserId) {
+        navigator.clipboard.writeText(currentUserId);
+        alert('あなたのIDコードをコピーしました！相手に送信してください。');
+      }
+    };
+
+    window.changeDate = function(newDate) {
+      if (!newDate) return;
+      selectedDate = newDate;
+      const d = new Date(selectedDate);
+      const days = ['Sun.', 'Mon.', 'Tue.', 'Wed.', 'Thu.', 'Fri.', 'Sat.'];
+      document.getElementById('headerDateDisplay').textContent = `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')} ${days[d.getDay()]}`;
+      renderAll();
+    };
+
+    window.openMealModal = function() { document.getElementById('mealModal').classList.remove('hidden'); };
+    window.closeMealModal = function() { document.getElementById('mealModal').classList.add('hidden'); };
+    window.openGoalCalModal = function() { document.getElementById('goalCalModal').classList.remove('hidden'); };
+    window.closeGoalCalModal = function() { document.getElementById('goalCalModal').classList.add('hidden'); };
+    window.openWeightGoalModal = function() { document.getElementById('targetWeightModal').classList.remove('hidden'); };
+    window.closeWeightGoalModal = function() { document.getElementById('targetWeightModal').classList.add('hidden'); };
+    window.togglePairModal = function() { document.getElementById('pairModal').classList.toggle('hidden'); };
+
+    window.switchTab = function(tabId) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
       document.getElementById(`tab-${tabId}`).classList.remove('hidden');
-
       document.querySelectorAll('.nav-btn').forEach(btn => {
         btn.classList.remove('text-sky-500');
         btn.classList.add('text-slate-400');
@@ -642,13 +765,15 @@
         activeNav.classList.remove('text-slate-400');
         activeNav.classList.add('text-sky-500');
       }
-    }
+    };
 
     function escapeHtml(str) {
       return str.replace(/[&<>"']/g, function(m) {
         return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
       });
     }
+
+    document.getElementById('datePicker').value = selectedDate;
   </script>
 </body>
 </html>
