@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>My Health Log</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;700&display=swap');
+    body {
+      font-family: 'Plus Jakarta Sans', 'Noto Sans JP', sans-serif;
+      background-color: #F0F4F8;
+      color: #1E293B;
+      touch-action: manipulation;
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      border: 1px solid #E2E8F0;
+    }
+    .pb-safe { padding-bottom: env(safe-area-inset-bottom, 1rem); }
+  </style>
+</head>
+<body class="flex justify-center bg-slate-100 min-h-screen">
+
+  <div class="w-full max-w-md bg-slate-50 min-h-screen flex flex-col shadow-2xl relative pb-20">
+
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-sky-400 to-sky-500 text-white p-4 pt-6 sticky top-0 z-20 shadow-md">
+      <div class="flex justify-between items-center">
+        <div>
+          <span class="text-xs font-semibold tracking-wider text-sky-100 uppercase block">2026/11/06 Fri.</span>
+          <h1 class="text-xl font-black tracking-tight flex items-center gap-2">
+            <i class="fa-solid font-bold fa-heart-pulse text-pink-300"></i> My Health Log
+          </h1>
+        </div>
+        <button onclick="togglePairModal()" class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition text-white border border-white/30 relative">
+          <i class="fa-solid fa-users"></i>
+          <span id="pairStatusDot" class="absolute top-0 right-0 w-3 h-3 bg-rose-400 border-2 border-white rounded-full"></span>
+        </button>
+      </div>
+
+      <!-- User Switcher Tab (Me vs Partner) -->
+      <div class="flex bg-sky-600/30 p-1 rounded-xl mt-3 text-xs font-bold">
+        <button id="viewMeBtn" onclick="switchViewUser('me')" class="flex-1 py-1.5 rounded-lg bg-white text-sky-600 shadow">
+          自分
+        </button>
+        <button id="viewPartnerBtn" onclick="switchViewUser('partner')" class="flex-1 py-1.5 rounded-lg text-white/80 hover:text-white">
+          パートナー
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content Area Container -->
+    <main class="flex-1 p-4 space-y-4 overflow-y-auto">
+
+      <!-- DASHBOARD TAB -->
+      <section id="tab-dashboard" class="tab-content space-y-4">
+        <!-- Partner Notice Banner -->
+        <div id="partnerBanner" class="hidden bg-pink-50 border border-pink-200 text-pink-700 p-3 rounded-xl text-xs flex justify-between items-center">
+          <span><i class="fa-solid fa-eye mr-1"></i> パートナーの記録を表示中</span>
+          <span class="font-bold text-[10px] bg-pink-200 px-2 py-0.5 rounded-full">閲覧モード</span>
+        </div>
+
+        <!-- Target Calorie & Progress Bar -->
+        <div class="glass-card rounded-2xl p-4 shadow-sm">
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">本日のカロリーバランス</span>
+            <span id="dashCalStatus" class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-sky-100 text-sky-700">順調</span>
+          </div>
+          <div class="flex items-baseline justify-between mb-2">
+            <div>
+              <span class="text-3xl font-extrabold text-slate-800" id="dashIntakeCal">1,450</span>
+              <span class="text-xs font-semibold text-slate-500"> / <span id="dashGoalCal">2,000</span> kcal</span>
+            </div>
+            <div class="text-right">
+              <span class="text-xs text-slate-500 block">差分</span>
+              <span class="text-lg font-bold text-sky-600" id="dashRemainingCal">550 kcal</span>
+            </div>
+          </div>
+          <div class="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
+            <div id="dashCalProgress" class="bg-gradient-to-r from-sky-400 to-pink-400 h-3 rounded-full transition-all duration-500" style="width: 72.5%"></div>
+          </div>
+        </div>
+
+        <!-- Quick Summary Cards Grid -->
+        <div class="grid grid-cols-2 gap-3">
+          <!-- Weight Card -->
+          <div class="glass-card p-3.5 rounded-2xl shadow-sm">
+            <div class="flex justify-between items-start mb-1">
+              <span class="text-xs font-bold text-slate-500">体重</span>
+              <div class="w-7 h-7 rounded-lg bg-sky-100 text-sky-600 flex items-center justify-center text-xs">
+                <i class="fa-solid fa-weight-scale"></i>
+              </div>
+            </div>
+            <div class="flex items-baseline gap-1">
+              <span class="text-2xl font-black text-slate-800" id="dashWeight">58.4</span>
+              <span class="text-xs text-slate-500">kg</span>
+            </div>
+          </div>
+
+          <!-- Body Fat Card -->
+          <div class="glass-card p-3.5 rounded-2xl shadow-sm">
+            <div class="flex justify-between items-start mb-1">
+              <span class="text-xs font-bold text-slate-500">体脂肪率</span>
+              <div class="w-7 h-7 rounded-lg bg-pink-100 text-pink-500 flex items-center justify-center text-xs">
+                <i class="fa-solid fa-percent"></i>
+              </div>
+            </div>
+            <div class="flex items-baseline gap-1">
+              <span class="text-2xl font-black text-slate-800" id="dashFat">21.2</span>
+              <span class="text-xs text-slate-500">%</span>
+            </div>
+          </div>
+
+          <!-- Sleep Card -->
+          <div class="glass-card p-3.5 rounded-2xl shadow-sm">
+            <div class="flex justify-between items-start mb-1">
+              <span class="text-xs font-bold text-slate-500">睡眠</span>
+              <div class="w-7 h-7 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs">
+                <i class="fa-solid fa-moon"></i>
+              </div>
+            </div>
+            <div class="flex items-baseline gap-1">
+              <span class="text-2xl font-black text-slate-800" id="dashSleep">7.5</span>
+              <span class="text-xs text-slate-500">時間</span>
+            </div>
+          </div>
+
+          <!-- Smoking Savings Card -->
+          <div class="glass-card p-3.5 rounded-2xl shadow-sm border-l-4 border-l-pink-500">
+            <div class="flex justify-between items-start mb-1">
+              <span class="text-xs font-bold text-slate-500">節煙節約</span>
+              <div class="w-7 h-7 rounded-lg bg-pink-50 text-pink-600 flex items-center justify-center text-xs">
+                <i class="fa-solid fa-piggy-bank"></i>
+              </div>
+            </div>
+            <div class="flex items-baseline gap-1">
+              <span class="text-2xl font-black text-pink-600" id="dashSavings">¥3,840</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- MEAL LOG TAB -->
+      <section id="tab-meals" class="tab-content space-y-4 hidden">
+        <div class="glass-card p-4 rounded-2xl shadow-sm border-t-4 border-t-sky-400">
+          <div class="flex justify-between items-start mb-3">
+            <div>
+              <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">食事管理</span>
+              <h2 class="text-lg font-black text-slate-800">本日の食事バランス</h2>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-3 gap-2 bg-slate-50 p-3 rounded-xl text-center border border-slate-100">
+            <div>
+              <span class="text-[10px] font-semibold text-slate-400 block">目標</span>
+              <span class="text-base font-extrabold text-slate-700" id="mealTargetVal">2,000</span>
+              <span class="text-[10px] text-slate-400">kcal</span>
+            </div>
+            <div class="border-x border-slate-200">
+              <span class="text-[10px] font-semibold text-slate-400 block">摂取</span>
+              <span class="text-base font-extrabold text-sky-600" id="mealCurrentVal">1,450</span>
+              <span class="text-[10px] text-slate-400">kcal</span>
+            </div>
+            <div>
+              <span class="text-[10px] font-semibold text-slate-400 block" id="mealDiffLabel">差分</span>
+              <span class="text-base font-extrabold text-pink-500" id="mealDiffVal">550</span>
+              <span class="text-[10px] text-slate-400">kcal</span>
+            </div>
+          </div>
+        </div>
+
+        <button id="addMealBtn" onclick="openMealModal()" class="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-2">
+          <i class="fa-solid fa-plus"></i> 食事を記録する
+        </button>
+
+        <div class="space-y-3" id="mealListsContainer">
+          <!-- Meals rendered by JS -->
+        </div>
+      </section>
+
+      <!-- SMOKING LOG TAB -->
+      <section id="tab-smoking" class="tab-content space-y-4 hidden">
+        <div class="bg-gradient-to-br from-pink-500 to-rose-400 text-white p-5 rounded-2xl shadow-md text-center">
+          <span class="text-xs font-bold uppercase tracking-widest text-pink-100 block mb-1">節約成果</span>
+          <div class="text-4xl font-black mb-1" id="smokeTotalSavings">¥3,840</div>
+          <p class="text-xs text-pink-100">1箱640円換算</p>
+        </div>
+
+        <div class="glass-card p-4 rounded-2xl shadow-sm text-center">
+          <span class="text-xs font-bold text-slate-400 block mb-1">本日の喫煙数</span>
+          <div class="text-4xl font-black text-slate-800 mb-3" id="todaySmokeCount">3</div>
+          <div id="smokeActionBtns" class="flex justify-center gap-3">
+            <button onclick="changeSmokeCount(-1)" class="w-12 h-12 rounded-xl bg-slate-100 font-black text-xl">-</button>
+            <button onclick="changeSmokeCount(1)" class="flex-1 bg-pink-500 text-white font-bold py-3 rounded-xl shadow">+ 1本記録</button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Navigation Bar -->
+    <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-white border-t border-slate-200 flex justify-around items-center py-2 z-30 pb-safe">
+      <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn text-sky-500 flex flex-col items-center">
+        <i class="fa-solid fa-house text-lg"></i>
+        <span class="text-[10px] font-bold">ホーム</span>
+      </button>
+      <button onclick="switchTab('meals')" id="nav-meals" class="nav-btn text-slate-400 flex flex-col items-center">
+        <i class="fa-solid fa-utensils text-lg"></i>
+        <span class="text-[10px] font-bold">食事</span>
+      </button>
+      <button onclick="switchTab('smoking')" id="nav-smoking" class="nav-btn text-slate-400 flex flex-col items-center">
+        <i class="fa-solid fa-smoking text-lg"></i>
+        <span class="text-[10px] font-bold">喫煙</span>
+      </button>
+    </nav>
+
+    <!-- PAIRING MODAL -->
+    <div id="pairModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+      <div class="bg-white w-full max-w-xs rounded-2xl p-5 space-y-4 shadow-2xl">
+        <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+          <i class="fa-solid fa-users text-sky-500"></i> パートナー共有設定
+        </h3>
+        <div>
+          <label class="text-xs text-slate-500 block mb-1">あなたのコード</label>
+          <div class="bg-slate-100 p-2.5 rounded-lg text-center font-mono font-bold text-slate-700" id="myPairCode">
+            生成中...
+          </div>
+        </div>
+        <div>
+          <label class="text-xs text-slate-500 block mb-1">相手のコードを入力</label>
+          <input type="text" id="partnerCodeInput" placeholder="相手のコード" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-center font-mono font-bold">
+        </div>
+        <div class="flex gap-2">
+          <button onclick="togglePairModal()" class="flex-1 bg-slate-100 text-slate-600 font-bold py-2 rounded-lg text-xs">閉じる</button>
+          <button onclick="savePartnerCode()" class="flex-1 bg-sky-500 text-white font-bold py-2 rounded-lg text-xs shadow">接続する</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Firebase SDKs -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+    // 1. Firebaseの設定情報（ご自身のConsoleから取得して貼り付けてください）
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT_ID.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    let currentUserId = null;
+    let partnerId = localStorage.getItem('partnerId') || null;
+    let viewTarget = 'me'; // 'me' or 'partner'
+
+    let myData = { intakeCal: 1450, goalCal: 2000, weight: 58.4, fat: 21.2, sleep: 7.5, smoked: 3 };
+    let partnerData = { intakeCal: 0, goalCal: 2000, weight: 0, fat: 0, sleep: 0, smoked: 0 };
+
+    // 匿名ログイン処理
+    signInAnonymously(auth).catch(console.error);
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        currentUserId = user.uid;
+        document.getElementById('myPairCode').textContent = currentUserId.slice(0, 8);
+        
+        // 自分のデータ同期設定
+        onSnapshot(doc(db, "health_logs", currentUserId), (docSnap) => {
+          if (docSnap.exists()) {
+            myData = docSnap.data();
+            if (viewTarget === 'me') renderUI(myData);
+          } else {
+            saveDataToFirebase(myData);
+          }
+        });
+
+        // パートナーのデータ同期設定
+        if (partnerId) {
+          document.getElementById('pairStatusDot').className = "absolute top-0 right-0 w-3 h-3 bg-emerald-400 border-2 border-white rounded-full";
+          listenPartnerData();
+        }
+      }
+    });
+
+    function listenPartnerData() {
+      if (!partnerId) return;
+      onSnapshot(doc(db, "health_logs", partnerId), (docSnap) => {
+        if (docSnap.exists()) {
+          partnerData = docSnap.data();
+          if (viewTarget === 'partner') renderUI(partnerData);
+        }
+      });
+    }
+
+    async function saveDataToFirebase(data) {
+      if (!currentUserId) return;
+      await setDoc(doc(db, "health_logs", currentUserId), data, { merge: true });
+    }
+
+    // UI Rendering
+    window.renderUI = function(data) {
+      document.getElementById('dashIntakeCal').textContent = data.intakeCal || 0;
+      document.getElementById('dashGoalCal').textContent = data.goalCal || 2000;
+      document.getElementById('dashRemainingCal').textContent = `${(data.goalCal || 2000) - (data.intakeCal || 0)} kcal`;
+      document.getElementById('dashWeight').textContent = data.weight || '-';
+      document.getElementById('dashFat').textContent = data.fat || '-';
+      document.getElementById('dashSleep').textContent = data.sleep || '-';
+      document.getElementById('todaySmokeCount').textContent = data.smoked || 0;
+      document.getElementById('dashSavings').textContent = `¥${((15 - (data.smoked || 0)) * 32 * 12).toLocaleString()}`;
+    };
+
+    window.switchViewUser = function(target) {
+      viewTarget = target;
+      const meBtn = document.getElementById('viewMeBtn');
+      const partnerBtn = document.getElementById('viewPartnerBtn');
+      const partnerBanner = document.getElementById('partnerBanner');
+
+      if (target === 'me') {
+        meBtn.className = "flex-1 py-1.5 rounded-lg bg-white text-sky-600 shadow font-bold";
+        partnerBtn.className = "flex-1 py-1.5 rounded-lg text-white/80 hover:text-white font-bold";
+        partnerBanner.classList.add('hidden');
+        document.getElementById('addMealBtn').classList.remove('hidden');
+        renderUI(myData);
+      } else {
+        partnerBtn.className = "flex-1 py-1.5 rounded-lg bg-white text-pink-600 shadow font-bold";
+        meBtn.className = "flex-1 py-1.5 rounded-lg text-white/80 hover:text-white font-bold";
+        partnerBanner.classList.remove('hidden');
+        document.getElementById('addMealBtn').classList.add('hidden');
+        renderUI(partnerData);
+      }
+    };
+
+    window.changeSmokeCount = function(delta) {
+      if (viewTarget !== 'me') return;
+      myData.smoked = Math.max(0, (myData.smoked || 0) + delta);
+      renderUI(myData);
+      saveDataToFirebase({ smoked: myData.smoked });
+    };
+
+    window.savePartnerCode = function() {
+      const code = document.getElementById('partnerCodeInput').value.trim();
+      if (code) {
+        partnerId = code;
+        localStorage.setItem('partnerId', code);
+        listenPartnerData();
+        togglePairModal();
+        alert('パートナーを接続しました！');
+      }
+    };
+
+    window.togglePairModal = function() {
+      document.getElementById('pairModal').classList.toggle('hidden');
+    };
+
+    window.switchTab = function(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+    };
+  </script>
+</body>
+</html>
